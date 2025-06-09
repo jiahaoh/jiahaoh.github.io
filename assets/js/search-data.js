@@ -83,6 +83,17 @@ ninja.data = [{
             window.location.href = "/blog/2025/plotly/";
           
         },
+      },{id: "post-jupyter-notebooks-in-al-folio-a-powerful-feature-for-data-science-blogging",
+        
+          title: "Jupyter Notebooks in al-folio: A Powerful Feature for Data Science Blogging",
+        
+        description: "Learn how to embed Jupyter notebooks directly in your al-folio blog posts",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/jupyter-notebook-demo/";
+          
+        },
       },{id: "post-welcome-to-my-personal-blog",
         
           title: "Welcome to My Personal Blog!",
