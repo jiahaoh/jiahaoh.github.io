@@ -2,24 +2,17 @@
 layout: about
 title: about
 permalink: /
-subtitle: Welcome to my personal blog and portfolio
+subtitle: Ph.D. Candidate in Chemical Biology @ MIT
 
 profile:
   align: right
-  image: prof_pic.jpg
-  image_circular: false # crops the image to make it circular
+  image: prof_pic.png
+  image_circular: true # crops the image to make it circular
   more_info: >
-    <p>Your institution/company</p>
-    <p>Your city, country</p>
-    <p>Contact information</p>
+    <p>Dota2ForLife</p>
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
-social: true # includes social icons at the bottom of the page
-
-announcements:
-  enabled: true # includes a list of news items
-  scrollable: true # adds a vertical scroll bar if there are more than 3 news items
-  limit: 5 # leave blank to include all the news in the `_news` folder
+social: false # includes social icons at the bottom of the page
 
 latest_posts:
   enabled: true
@@ -27,21 +20,10 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-Hello! I'm Jiahao, and welcome to my personal blog and portfolio. This is where I share my thoughts, projects, and academic journey.
+I am a Ph.D. candidate in Chemical Biology at the [Massachusetts Institute of Technology](https://chemistry.mit.edu/), working with Prof. [Xiao Wang](https://wanglab.mit.edu/). My research focuses on **AI for Science**, **spatial transcriptomics**, **biomedical imaging**, and **production-grade tooling** for computational biology.
 
-You can customize this biography by editing the `_pages/about.md` file. Feel free to:
-- Replace the profile picture by adding your photo as `prof_pic.jpg` in the `assets/img/` folder
-- Update your contact information in the profile section above
-- Add links to your social media accounts
-- Share information about your background, interests, and work
+Previously, I worked as an Associate Computational Biologist at the [Broad Institute of MIT and Harvard](https://www.broadinstitute.org/), where I developed analysis pipelines for spatial transcriptomics and contributed to creating spatial atlases of the mouse central nervous system.
 
-This site is built using the beautiful [al-folio](https://github.com/alshedivat/al-folio) Jekyll theme, which is perfect for academics and researchers. You can add blog posts, showcase projects, list publications, and much more.
+My work spans developing end-to-end analysis toolkits for spatial transcriptomics ([Starfinder](https://www.nature.com/articles/s41596-024-01070-z)), spatially resolved single-cell translatomics ([RIBOmap](https://www.science.org/doi/10.1126/science.add3067)), and integrative in-situ mapping of the brain ([STARmap PLUS](https://www.nature.com/articles/s41593-023-01286-y)).
 
-To get started:
-1. **Customize your profile**: Update the information in this about page
-2. **Add social links**: Edit `_data/socials.yml` to add your social media profiles  
-3. **Write your first blog post**: Create a new file in the `_posts` folder
-4. **Add projects**: Create project pages in the `_projects` folder
-5. **List publications**: Add your publications to `_bibliography/papers.bib`
-
-Feel free to explore the template and make it your own!
+I am also interested in **large language models**, **agentic systems**, and **data/figure automation**.

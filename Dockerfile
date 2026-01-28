@@ -54,7 +54,7 @@ ENV EXECJS_RUNTIME=Node \
 RUN mkdir /srv/jekyll
 
 # copy the Gemfile and Gemfile.lock to the image
-ADD Gemfile.lock /srv/jekyll
+# ADD Gemfile.lock /srv/jekyll
 ADD Gemfile /srv/jekyll
 
 # set the working directory
@@ -73,4 +73,5 @@ COPY bin/entry_point.sh /tmp/entry_point.sh
 # set the ownership of the jekyll site directory to the non-root user
 # USER $USERNAME
 
+RUN bundle install
 CMD ["/tmp/entry_point.sh"]

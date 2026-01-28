@@ -2,10 +2,10 @@
 # Site settings
 # -----------------------------------------------------------------------------
 
-title: Jiahao's Blog # the website title (if blank, full name will be used instead)
+title: Jiahao Huang # the website title (if blank, full name will be used instead)
 first_name: Jiahao
 middle_name: 
-last_name: H
+last_name: Huang
 contact_note: >
   Feel free to reach out via any of the platforms below.
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
@@ -54,7 +54,8 @@ posts_in_search: true
 bib_search: true
 
 # Dimensions
-max_width: 930px
+# max_width: 930px
+max_width: 1500px
 
 # TODO: add layout settings (single page vs. multi-page)
 
@@ -139,12 +140,6 @@ newsletter:
 # -----------------------------------------------------------------------------
 
 collections:
-  books:
-    output: true
-  news:
-    defaults:
-      layout: post
-    output: true
   projects:
     output: true
 
@@ -187,6 +182,7 @@ exclude:
   - README.md
   - readme_preview/
   - vendor
+
 keep_files:
   - CNAME
   - .nojekyll
@@ -248,8 +244,6 @@ jekyll-archives:
       year: "/blog/:year/"
       tags: "/blog/:type/:name/"
       categories: "/blog/:type/:name/"
-  books:
-    enabled: [year, tags, categories] # enables year, tag and category archives (remove if you need to disable one of them).
 
 display_tags: ["formatting", "images", "links", "math", "code", "blockquotes"] # these tags will be displayed on the front page of your blog
 display_categories: ["external-services"] # these categories will be displayed on the front page of your blog
@@ -381,7 +375,7 @@ enable_masonry: true # enables automatic project cards arrangement
 enable_math: true # enables math typesetting (uses MathJax)
 enable_tooltips: false # enables automatic tooltip links generated for each section titles on pages and posts
 enable_darkmode: true # enables switching between light/dark modes
-enable_navbar_social: false # enables displaying social links in the navbar on the about page
+enable_navbar_social: true # enables displaying social links in the navbar on the about page
 enable_project_categories: true # enables categorization of projects into multiple categories
 enable_medium_zoom: true # enables image zoom feature (as on medium.com)
 enable_progressbar: true # enables a horizontal progress bar linked to the vertical scroll position

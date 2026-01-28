@@ -2,96 +2,74 @@
   type: map
   contents:
     - name: Full Name
-      value: Albert Einstein
-    - name: Date of Birth
-      value: 14th March 1879
+      value: Jiahao Huang
+    - name: Email
+      value: jiahaoh@mit.edu
+    - name: Location
+      value: Cambridge, MA
     - name: Languages
-      value: English, German
+      value: English, Mandarin
 
 - title: Education
   type: time_table
   contents:
-    - title: PhD
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1905
+    - title: Ph.D. in Chemical Biology
+      institution: Massachusetts Institute of Technology, Cambridge, MA
+      year: 2022 - Present
       description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Federal teaching diploma
-      institution: Eidgenössische Technische Hochschule, Zurich, Switzerland
-      year: 1900
+        - Department of Chemistry
+        - Advisor: Prof. Xiao Wang
+    - title: M.S. in Bioinformatics
+      institution: Georgetown University, Washington D.C.
+      year: 2017 - 2018
       description:
-        - Description 1.
-        - Description 2.
-
-- title: Experience
-  type: time_table
-  contents:
-    - title: Professor of Theoretical Physics
-      institution: Institute for Advanced Study, Princeton University
-      year: 1933 - 1955
+        - Department of Biochemistry, Molecular & Cellular Biology
+    - title: B.S. in Biochemistry
+      institution: Purdue University, West Lafayette, IN
+      year: 2013 - 2016
       description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Visiting Professor
-      institution: California Institute of Technology, Pasadena, California, US
-      year: 1933
-      description:
-        - Description 1.
-        - Description 2.
+        - College of Agriculture
 
-    - title: Director
-      institution: Kaiser Wilhelm Institute for Physics, Berlin, Germany.
-      year: 1917-1933
-
-    - title: Professor of Theoretical Physics
-      institution: Karl-Ferdinand University, Prague, Czechoslovakia
-      year: 1911 - 1917
-      description:
-
-    - title: Associate Professor of Theoretical Physics
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1909 - 1911
-
-- title: Open Source Projects
-  type: time_table
-  contents:
-    - title: <a href="https://github.com/alshedivat/al-folio">al-folio</a>
-      year: 2015-now
-      description: A beautiful, simple, clean, and responsive Jekyll theme for academics.
-
-- title: Honors and Awards
-  type: time_table
-  contents:
-    - year: 1921
-      items:
-        - Nobel Prize in Physics
-        - Matteucci Medal
-    - year: 2029
-      items:
-        - Max Planck Medal
-
-- title: Academic Interests
+- title: Research Interests
   type: nested_list
   contents:
-    - title: Topic 1.
+    - title: AI for Science
       items:
-        - Description 1.
-        - Description 2.
-    - title: Topic 2.
+        - Large Language Models
+        - Agentic Systems
+        - Data/Figure Automation
+    - title: Computational Biology
       items:
-        - Description 1.
-        - Description 2.
+        - Spatial Transcriptomics
+        - Biomedical Imaging
+        - Production-grade Tooling
 
-- title: Other Interests
-  type: list
+- title: Professional Experience
+  type: time_table
   contents:
-    - <u>Hobbies:</u> Hobby 1, Hobby 2, etc.
+    - title: Research Assistant
+      institution: Massachusetts Institute of Technology
+      year: 2022 - Present
+      description:
+        - "Spatial transcriptomic and translatomic co-profiling of Schizophrenia: Employed single-cell resolved spatial transcriptomics (STARmap) combined with translatomics (RIBOmap) to generate an atlas of transcriptional and translational states in the Grin2a+/- mouse model of SCZ."
+        - "End-to-end analysis toolkit for spatial transcriptomics (Starfinder): Built a modularized E2E pipeline for image-based in-situ sequencing assays with Snakemake. 5X faster vs. legacy baseline. [Nature Protocols 2025]"
+        - "Spatially resolved single-cell translatomics (RIBOmap): Designed DNA probe sets for a new spatial translatomics assay. Trained KNN classifiers for automated quality assessment and cell type annotation. [Science 2023]"
+    - title: Associate Computational Biologist
+      institution: Broad Institute of MIT and Harvard
+      year: 2019 - 2022
+      description:
+        - "Integrative in-situ mapping of mouse brain (STARmap PLUS): Developed an analysis pipeline for a spatial transcriptomics assay with multi-modalities. Employed a U-Net model to achieve SOTA cell segmentation."
+        - "Created a spatial atlas of the mouse CNS covering 1.09 million cells and 11,844 genes. [Nature Neuroscience 2023] [Nature 2023]"
+
+- title: Skills
+  type: nested_list
+  contents:
+    - title: Programming Languages
+      items:
+        - Python, Matlab, R, Shell, HTML, JavaScript
+    - title: Tools & Frameworks
+      items:
+        - "ML/AI: PyTorch, smolagents, LlamaIndex, LangGraph, HuggingFace"
+        - "Bioinformatics: Scanpy, Seurat, Sklearn, scikit-image, Fiji/ImageJ, CellProfiler"
+        - "Visualization: Matplotlib, Vega-lite, Altair, plotly"
+        - "Infrastructure: Snakemake, Nextflow, Git, Docker, SLURM"
