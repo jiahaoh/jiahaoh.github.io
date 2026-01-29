@@ -1,0 +1,29 @@
+# Personal Mode Content
+# This data is displayed only when Personal Mode is active
+
+heroes:
+  - name: Invoker
+    id: invoker
+    role: Main
+    image: https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/invoker.png
+
+  - name: Rubick
+    id: rubick
+    role: Support
+    image: https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/rubick.png
+
+  - name: Puck
+    id: puck
+    role: Mid
+    image: https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/puck.png
+
+  - name: Earth Spirit
+    id: earth_spirit
+    role: Roamer
+    image: https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/earth_spirit.png
+
+currently:
+  playing: "Dota 2"
+  rank: "Ancient III"
+  reading: "The Alignment Problem"
+  watching: "Frieren"
