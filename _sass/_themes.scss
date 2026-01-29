@@ -160,3 +160,77 @@ html[data-theme-setting="light"] {
     display: block;
   }
 }
+
+/*******************************************************************************
+ * Personal Mode (Easter Egg)
+ ******************************************************************************/
+
+html[data-persona="personal"] {
+  --global-bg-color: #{$personal-bg-primary};
+  --global-code-bg-color: #1e1e2e;
+  --global-text-color: #{$personal-text-primary};
+  --global-text-color-light: #{$personal-text-secondary};
+  --global-theme-color: #{$personal-gradient-mid};
+  --global-hover-color: #{$personal-gradient-end};
+  --global-hover-text-color: #{$personal-text-primary};
+  --global-footer-bg-color: #{$personal-bg-surface};
+  --global-footer-text-color: #{$personal-text-primary};
+  --global-footer-link-color: #{$personal-gradient-mid};
+  --global-distill-app-color: #{$personal-text-secondary};
+  --global-divider-color: #{$personal-divider};
+  --global-card-bg-color: #{$personal-bg-surface};
+
+  // Gradient accent for links
+  a:not(.nav-link):not(.navbar-brand):not(.btn) {
+    background: linear-gradient(
+      90deg,
+      #{$personal-gradient-start},
+      #{$personal-gradient-mid},
+      #{$personal-gradient-end}
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    &:hover {
+      text-shadow: 0 0 20px rgba($personal-gradient-mid, 0.5);
+    }
+  }
+
+  // Gradient text for headings
+  h1, h2 {
+    background: linear-gradient(
+      90deg,
+      #{$personal-gradient-start},
+      #{$personal-gradient-mid}
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  // Card glow effect
+  .card {
+    box-shadow: 0 4px 20px rgba($personal-gradient-mid, 0.1);
+    border: 1px solid #{$personal-divider};
+
+    &:hover {
+      box-shadow: 0 8px 30px rgba($personal-gradient-mid, 0.2);
+      border-top: 2px solid #{$personal-gradient-mid};
+    }
+  }
+
+  // Navbar glow on hover
+  .navbar .nav-link:hover {
+    text-shadow: 0 0 10px rgba($personal-gradient-end, 0.5);
+  }
+}
+
+// Smooth transition between personas
+html.persona-transition,
+html.persona-transition * {
+  transition: background-color 0.6s ease-in-out,
+              color 0.6s ease-in-out,
+              border-color 0.6s ease-in-out,
+              box-shadow 0.6s ease-in-out !important;
+}
