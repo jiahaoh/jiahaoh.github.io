@@ -1,0 +1,627 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"> <html><body> <h1 id="dual-persona-portfolio-implementation-plan">Dual Persona Portfolio Implementation Plan</h1> <blockquote> <p><strong>For Claude:</strong> REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.</p> </blockquote> <p><strong>Goal:</strong> Transform the al-folio portfolio into a dual-identity site with Professional Mode (default) and Personal Mode (Easter egg triggered by clicking profile photo 3 times).</p> <p><strong>Architecture:</strong> CSS-driven theme switching using <code class="language-plaintext highlighter-rouge">data-persona</code> attribute on <code class="language-plaintext highlighter-rouge">&lt;html&gt;</code>, similar to existing <code class="language-plaintext highlighter-rouge">data-theme</code> for dark/light mode. Personal mode content conditionally rendered via Liquid. JavaScript handles Easter egg interaction and localStorage persistence.</p> <p><strong>Tech Stack:</strong> Jekyll/Liquid, SCSS, Vanilla JavaScript, Google Fonts (Space Grotesk, Space Mono), Self-hosted Satoshi font</p> <hr> <h2 id="task-1-add-new-typography-fonts">Task 1: Add New Typography Fonts</h2> <p><strong>Files:</strong></p> <ul> <li>Modify: <code class="language-plaintext highlighter-rouge">_config.yml:426-428</code> (Google Fonts URL)</li> <li>Create: <code class="language-plaintext highlighter-rouge">assets/fonts/Satoshi-Variable.woff2</code> (download from Fontshare)</li> <li>Create: <code class="language-plaintext highlighter-rouge">_sass/_typography.scss</code> </li> <li>Modify: <code class="language-plaintext highlighter-rouge">assets/css/main.scss:9-24</code> (add import)</li> </ul> <p><strong>Step 1: Update Google Fonts URL in config</strong></p> <p>In <code class="language-plaintext highlighter-rouge">_config.yml</code>, find the <code class="language-plaintext highlighter-rouge">google_fonts</code> section (~line 426) and replace:</p> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">google_fonts</span><span class="pi">:</span>
+  <span class="na">url</span><span class="pi">:</span>
+    <span class="na">fonts</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap"</span>
+</code></pre></div></div> <p><strong>Step 2: Download Satoshi font</strong></p> <p>Run:</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> assets/fonts
+curl <span class="nt">-L</span> <span class="s2">"https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&amp;display=swap"</span> <span class="nt">-o</span> assets/css/satoshi.css
+</code></pre></div></div> <p>Note: For production, download the woff2 files directly from Fontshare and self-host.</p> <p><strong>Step 3: Create typography SCSS file</strong></p> <p>Create <code class="language-plaintext highlighter-rouge">_sass/_typography.scss</code>:</p> <div class="language-scss highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*******************************************************************************
+ * Typography - Space Grotesk + Satoshi + Space Mono
+ ******************************************************************************/</span>
+
+<span class="c1">// Font stacks</span>
+<span class="nv">$font-family-heading</span><span class="p">:</span>
+  <span class="s2">"Space Grotesk"</span><span class="o">,</span>
+  <span class="o">-</span><span class="n">apple-system</span><span class="o">,</span>
+  <span class="n">BlinkMacSystemFont</span><span class="o">,</span>
+  <span class="s2">"Segoe UI"</span><span class="o">,</span>
+  <span class="nb">sans-serif</span><span class="p">;</span>
+<span class="nv">$font-family-body</span><span class="p">:</span>
+  <span class="s2">"Satoshi"</span><span class="o">,</span>
+  <span class="o">-</span><span class="n">apple-system</span><span class="o">,</span>
+  <span class="n">BlinkMacSystemFont</span><span class="o">,</span>
+  <span class="s2">"Segoe UI"</span><span class="o">,</span>
+  <span class="nb">sans-serif</span><span class="p">;</span>
+<span class="nv">$font-family-mono</span><span class="p">:</span> <span class="s2">"Space Mono"</span><span class="o">,</span> <span class="s2">"SF Mono"</span><span class="o">,</span> <span class="n">Consolas</span><span class="o">,</span> <span class="nb">monospace</span><span class="p">;</span>
+
+<span class="c1">// Apply typography</span>
+<span class="nt">html</span> <span class="p">{</span>
+  <span class="nl">font-family</span><span class="p">:</span> <span class="nv">$font-family-body</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">h1</span><span class="o">,</span>
+<span class="nt">h2</span><span class="o">,</span>
+<span class="nt">h3</span><span class="o">,</span>
+<span class="nt">h4</span><span class="o">,</span>
+<span class="nt">h5</span><span class="o">,</span>
+<span class="nt">h6</span><span class="o">,</span>
+<span class="nc">.navbar-brand</span><span class="o">,</span>
+<span class="nc">.nav-link</span> <span class="p">{</span>
+  <span class="nl">font-family</span><span class="p">:</span> <span class="nv">$font-family-heading</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">code</span><span class="o">,</span>
+<span class="nt">pre</span><span class="o">,</span>
+<span class="nt">kbd</span><span class="o">,</span>
+<span class="nt">samp</span><span class="o">,</span>
+<span class="nc">.post-meta</span><span class="o">,</span>
+<span class="nc">.post-tags</span><span class="o">,</span>
+<span class="nc">.more-info</span> <span class="p">{</span>
+  <span class="nl">font-family</span><span class="p">:</span> <span class="nv">$font-family-mono</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Typography scale</span>
+<span class="nt">h1</span> <span class="p">{</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">2</span><span class="mi">.5rem</span><span class="p">;</span>
+  <span class="nl">font-weight</span><span class="p">:</span> <span class="m">600</span><span class="p">;</span>
+  <span class="nl">letter-spacing</span><span class="p">:</span> <span class="m">-0</span><span class="mi">.02em</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">h2</span> <span class="p">{</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">2rem</span><span class="p">;</span>
+  <span class="nl">font-weight</span><span class="p">:</span> <span class="m">600</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">h3</span> <span class="p">{</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">1</span><span class="mi">.5rem</span><span class="p">;</span>
+  <span class="nl">font-weight</span><span class="p">:</span> <span class="m">500</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">body</span> <span class="p">{</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">1</span><span class="mi">.1rem</span><span class="p">;</span>
+  <span class="nl">line-height</span><span class="p">:</span> <span class="m">1</span><span class="mi">.7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Readable line length</span>
+<span class="nc">.post-content</span> <span class="nt">p</span><span class="o">,</span>
+<span class="nc">.post-content</span> <span class="nt">li</span> <span class="p">{</span>
+  <span class="nl">max-width</span><span class="p">:</span> <span class="m">65ch</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p><strong>Step 4: Import typography in main.scss</strong></p> <p>In <code class="language-plaintext highlighter-rouge">assets/css/main.scss</code>, add the import after “variables”:</p> <div class="language-scss highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">@import</span> <span class="s2">"variables"</span><span class="o">,</span> <span class="s2">"typography"</span><span class="o">,</span> <span class="s2">"themes"</span><span class="p">;</span> <span class="c1">// ... rest of imports</span>
+</code></pre></div></div> <p><strong>Step 5: Verify fonts load</strong></p> <p>Run: <code class="language-plaintext highlighter-rouge">bundle exec jekyll serve --watch --port=8080</code></p> <p>Open browser DevTools → Network → filter “font” → confirm Space Grotesk and Space Mono load.</p> <p><strong>Step 6: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add _config.yml _sass/_typography.scss assets/css/main.scss
+git commit <span class="nt">-m</span> <span class="s2">"feat: add Space Grotesk + Satoshi typography system"</span>
+</code></pre></div></div> <hr> <h2 id="task-2-update-professional-mode-color-variables">Task 2: Update Professional Mode Color Variables</h2> <p><strong>Files:</strong></p> <ul> <li>Modify: <code class="language-plaintext highlighter-rouge">_sass/_variables.scss</code> (color definitions)</li> <li>Modify: <code class="language-plaintext highlighter-rouge">_sass/_themes.scss</code> (CSS custom properties)</li> </ul> <p><strong>Step 1: Update base color variables</strong></p> <p>In <code class="language-plaintext highlighter-rouge">_sass/_variables.scss</code>, update/add these colors after existing color definitions (~line 8):</p> <div class="language-scss highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Professional Mode Colors (Warm Beige + Rust)</span>
+<span class="nv">$pro-bg-primary</span><span class="p">:</span> <span class="mh">#faf9f7</span><span class="p">;</span>
+<span class="nv">$pro-bg-surface</span><span class="p">:</span> <span class="mh">#ffffff</span><span class="p">;</span>
+<span class="nv">$pro-text-primary</span><span class="p">:</span> <span class="mh">#2d2d2d</span><span class="p">;</span>
+<span class="nv">$pro-text-secondary</span><span class="p">:</span> <span class="mh">#6b6b6b</span><span class="p">;</span>
+<span class="nv">$pro-accent</span><span class="p">:</span> <span class="mh">#c75b39</span><span class="p">;</span>
+<span class="nv">$pro-accent-hover</span><span class="p">:</span> <span class="mh">#a84a2e</span><span class="p">;</span>
+<span class="nv">$pro-divider</span><span class="p">:</span> <span class="nf">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="mi">.08</span><span class="p">);</span>
+
+<span class="c1">// Personal Mode Colors (City-pop Dark)</span>
+<span class="nv">$personal-bg-primary</span><span class="p">:</span> <span class="mh">#1a1a2e</span><span class="p">;</span>
+<span class="nv">$personal-bg-surface</span><span class="p">:</span> <span class="mh">#252542</span><span class="p">;</span>
+<span class="nv">$personal-text-primary</span><span class="p">:</span> <span class="mh">#e8e4df</span><span class="p">;</span>
+<span class="nv">$personal-text-secondary</span><span class="p">:</span> <span class="mh">#9d99b3</span><span class="p">;</span>
+<span class="nv">$personal-gradient-start</span><span class="p">:</span> <span class="mh">#f4a261</span><span class="p">;</span>
+<span class="nv">$personal-gradient-mid</span><span class="p">:</span> <span class="mh">#e076a0</span><span class="p">;</span>
+<span class="nv">$personal-gradient-end</span><span class="p">:</span> <span class="mh">#9d8cff</span><span class="p">;</span>
+<span class="nv">$personal-divider</span><span class="p">:</span> <span class="nf">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">0</span><span class="mi">.1</span><span class="p">);</span>
+</code></pre></div></div> <p><strong>Step 2: Update light theme CSS custom properties</strong></p> <p>In <code class="language-plaintext highlighter-rouge">_sass/_themes.scss</code>, update the <code class="language-plaintext highlighter-rouge">:root</code> block to use new professional colors:</p> <div class="language-scss highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">:root</span> <span class="p">{</span>
+  <span class="na">color-scheme</span><span class="p">:</span> <span class="n">light</span><span class="p">;</span>
+  <span class="na">--global-bg-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$pro-bg-primary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-code-bg-color</span><span class="p">:</span> <span class="mh">#f5f5f5</span><span class="p">;</span>
+  <span class="na">--global-text-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$pro-text-primary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-text-color-light</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$pro-text-secondary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-theme-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$pro-accent</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-hover-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$pro-accent-hover</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-hover-text-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$white-color</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-footer-bg-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$pro-text-primary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-footer-text-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$pro-bg-primary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-footer-link-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$white-color</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-distill-app-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$pro-text-secondary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-divider-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$pro-divider</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-card-bg-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$pro-bg-surface</span><span class="si">}</span><span class="p">;</span>
+  <span class="c1">// ... keep other variables</span>
+</code></pre></div></div> <p><strong>Step 3: Verify color changes</strong></p> <p>Refresh browser, confirm:</p> <ul> <li>Background is warm beige (#FAF9F7)</li> <li>Accent color is rust (#c75b39)</li> <li>Text is near-black (#2d2d2d)</li> </ul> <p><strong>Step 4: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add _sass/_variables.scss _sass/_themes.scss
+git commit <span class="nt">-m</span> <span class="s2">"feat: update to warm beige + rust professional palette"</span>
+</code></pre></div></div> <hr> <h2 id="task-3-add-personal-mode-css-rules">Task 3: Add Personal Mode CSS Rules</h2> <p><strong>Files:</strong></p> <ul> <li>Modify: <code class="language-plaintext highlighter-rouge">_sass/_themes.scss</code> (add persona styles)</li> </ul> <p><strong>Step 1: Add persona attribute styles</strong></p> <p>At the end of <code class="language-plaintext highlighter-rouge">_sass/_themes.scss</code>, add personal mode styles:</p> <div class="language-scss highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*******************************************************************************
+ * Personal Mode (Easter Egg)
+ ******************************************************************************/</span>
+
+<span class="nt">html</span><span class="o">[</span><span class="nt">data-persona</span><span class="o">=</span><span class="s2">"personal"</span><span class="o">]</span> <span class="p">{</span>
+  <span class="na">--global-bg-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-bg-primary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-code-bg-color</span><span class="p">:</span> <span class="mh">#1e1e2e</span><span class="p">;</span>
+  <span class="na">--global-text-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-text-primary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-text-color-light</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-text-secondary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-theme-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-gradient-mid</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-hover-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-gradient-end</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-hover-text-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-text-primary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-footer-bg-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-bg-surface</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-footer-text-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-text-primary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-footer-link-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-gradient-mid</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-distill-app-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-text-secondary</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-divider-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-divider</span><span class="si">}</span><span class="p">;</span>
+  <span class="na">--global-card-bg-color</span><span class="p">:</span> <span class="si">#{</span><span class="nv">$personal-bg-surface</span><span class="si">}</span><span class="p">;</span>
+
+  <span class="c1">// Gradient accent for links</span>
+  <span class="nt">a</span><span class="nd">:not</span><span class="o">(</span><span class="nc">.nav-link</span><span class="o">)</span><span class="nd">:not</span><span class="o">(</span><span class="nc">.navbar-brand</span><span class="o">)</span> <span class="p">{</span>
+    <span class="nl">background</span><span class="p">:</span> <span class="nf">linear-gradient</span><span class="p">(</span><span class="m">90deg</span><span class="o">,</span> <span class="si">#{</span><span class="nv">$personal-gradient-start</span><span class="si">}</span><span class="o">,</span> <span class="si">#{</span><span class="nv">$personal-gradient-mid</span><span class="si">}</span><span class="o">,</span> <span class="si">#{</span><span class="nv">$personal-gradient-end</span><span class="si">}</span><span class="p">);</span>
+    <span class="na">-webkit-background-clip</span><span class="p">:</span> <span class="nb">text</span><span class="p">;</span>
+    <span class="na">-webkit-text-fill-color</span><span class="p">:</span> <span class="nb">transparent</span><span class="p">;</span>
+    <span class="nl">background-clip</span><span class="p">:</span> <span class="nb">text</span><span class="p">;</span>
+
+    <span class="k">&amp;</span><span class="nd">:hover</span> <span class="p">{</span>
+      <span class="nl">text-shadow</span><span class="p">:</span> <span class="m">0</span> <span class="m">0</span> <span class="m">20px</span> <span class="nf">rgba</span><span class="p">(</span><span class="nv">$personal-gradient-mid</span><span class="o">,</span> <span class="m">0</span><span class="mi">.5</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Gradient text for headings</span>
+  <span class="nt">h1</span><span class="o">,</span>
+  <span class="nt">h2</span> <span class="p">{</span>
+    <span class="nl">background</span><span class="p">:</span> <span class="nf">linear-gradient</span><span class="p">(</span><span class="m">90deg</span><span class="o">,</span> <span class="si">#{</span><span class="nv">$personal-gradient-start</span><span class="si">}</span><span class="o">,</span> <span class="si">#{</span><span class="nv">$personal-gradient-mid</span><span class="si">}</span><span class="p">);</span>
+    <span class="na">-webkit-background-clip</span><span class="p">:</span> <span class="nb">text</span><span class="p">;</span>
+    <span class="na">-webkit-text-fill-color</span><span class="p">:</span> <span class="nb">transparent</span><span class="p">;</span>
+    <span class="nl">background-clip</span><span class="p">:</span> <span class="nb">text</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Card glow effect</span>
+  <span class="nc">.card</span> <span class="p">{</span>
+    <span class="nl">box-shadow</span><span class="p">:</span> <span class="m">0</span> <span class="m">4px</span> <span class="m">20px</span> <span class="nf">rgba</span><span class="p">(</span><span class="nv">$personal-gradient-mid</span><span class="o">,</span> <span class="m">0</span><span class="mi">.1</span><span class="p">);</span>
+    <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="si">#{</span><span class="nv">$personal-divider</span><span class="si">}</span><span class="p">;</span>
+
+    <span class="k">&amp;</span><span class="nd">:hover</span> <span class="p">{</span>
+      <span class="nl">box-shadow</span><span class="p">:</span> <span class="m">0</span> <span class="m">8px</span> <span class="m">30px</span> <span class="nf">rgba</span><span class="p">(</span><span class="nv">$personal-gradient-mid</span><span class="o">,</span> <span class="m">0</span><span class="mi">.2</span><span class="p">);</span>
+      <span class="nl">border-top</span><span class="p">:</span> <span class="m">2px</span> <span class="nb">solid</span> <span class="si">#{</span><span class="nv">$personal-gradient-mid</span><span class="si">}</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Navbar glow on hover</span>
+  <span class="nc">.navbar</span> <span class="nc">.nav-link</span><span class="nd">:hover</span> <span class="p">{</span>
+    <span class="nl">text-shadow</span><span class="p">:</span> <span class="m">0</span> <span class="m">0</span> <span class="m">10px</span> <span class="nf">rgba</span><span class="p">(</span><span class="nv">$personal-gradient-end</span><span class="o">,</span> <span class="m">0</span><span class="mi">.5</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Smooth transition between personas</span>
+<span class="nt">html</span><span class="nc">.persona-transition</span><span class="o">,</span>
+<span class="nt">html</span><span class="nc">.persona-transition</span> <span class="o">*</span> <span class="p">{</span>
+  <span class="nl">transition</span><span class="p">:</span>
+    <span class="n">background-color</span> <span class="m">0</span><span class="mi">.6s</span> <span class="nb">ease-in-out</span><span class="o">,</span>
+    <span class="nb">color</span> <span class="m">0</span><span class="mi">.6s</span> <span class="nb">ease-in-out</span><span class="o">,</span>
+    <span class="n">border-color</span> <span class="m">0</span><span class="mi">.6s</span> <span class="nb">ease-in-out</span><span class="o">,</span>
+    <span class="n">box-shadow</span> <span class="m">0</span><span class="mi">.6s</span> <span class="nb">ease-in-out</span> <span class="o">!</span><span class="n">important</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p><strong>Step 2: Test manually</strong></p> <p>Open browser DevTools → Elements → find <code class="language-plaintext highlighter-rouge">&lt;html&gt;</code> → add attribute <code class="language-plaintext highlighter-rouge">data-persona="personal"</code></p> <p>Verify:</p> <ul> <li>Background turns dark twilight (#1a1a2e)</li> <li>Text turns cream (#e8e4df)</li> <li>Headings have gradient text</li> <li>Cards have glow effect</li> </ul> <p><strong>Step 3: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add _sass/_themes.scss
+git commit <span class="nt">-m</span> <span class="s2">"feat: add personal mode CSS with city-pop gradients and glow effects"</span>
+</code></pre></div></div> <hr> <h2 id="task-4-create-profile-photo-easter-egg-javascript">Task 4: Create Profile Photo Easter Egg JavaScript</h2> <p><strong>Files:</strong></p> <ul> <li>Create: <code class="language-plaintext highlighter-rouge">assets/js/persona.js</code> </li> <li>Modify: <code class="language-plaintext highlighter-rouge">_includes/head.liquid</code> (add script)</li> </ul> <p><strong>Step 1: Create persona toggle script</strong></p> <p>Create <code class="language-plaintext highlighter-rouge">assets/js/persona.js</code>:</p> <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * Persona Toggle - Easter egg to switch between Professional and Personal modes
+ * Trigger: Click profile photo 3 times
+ */</span>
+
+<span class="p">(</span><span class="nf">function </span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">STORAGE_KEY</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">persona</span><span class="dl">"</span><span class="p">;</span>
+  <span class="kd">const</span> <span class="nx">STORAGE_TIMESTAMP_KEY</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">persona_timestamp</span><span class="dl">"</span><span class="p">;</span>
+  <span class="kd">const</span> <span class="nx">EXPIRY_HOURS</span> <span class="o">=</span> <span class="mi">24</span><span class="p">;</span>
+  <span class="kd">const</span> <span class="nx">CLICK_THRESHOLD</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="kd">const</span> <span class="nx">CLICK_TIMEOUT</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">;</span> <span class="c1">// Reset click count after 2s of inactivity</span>
+
+  <span class="kd">let</span> <span class="nx">clickCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">clickTimer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+  <span class="c1">// Check if persona has expired (24 hours)</span>
+  <span class="kd">function</span> <span class="nf">isPersonaExpired</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">timestamp</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nf">getItem</span><span class="p">(</span><span class="nx">STORAGE_TIMESTAMP_KEY</span><span class="p">);</span>
+    <span class="k">if </span><span class="p">(</span><span class="o">!</span><span class="nx">timestamp</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="kd">const</span> <span class="nx">hoursSince</span> <span class="o">=</span> <span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nf">now</span><span class="p">()</span> <span class="o">-</span> <span class="nf">parseInt</span><span class="p">(</span><span class="nx">timestamp</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">hoursSince</span> <span class="o">&gt;</span> <span class="nx">EXPIRY_HOURS</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Get current persona setting</span>
+  <span class="kd">function</span> <span class="nf">getPersona</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// URL param override for sharing formal links</span>
+    <span class="kd">const</span> <span class="nx">urlParams</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">URLSearchParams</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">search</span><span class="p">);</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">urlParams</span><span class="p">.</span><span class="nf">has</span><span class="p">(</span><span class="dl">"</span><span class="s2">professional</span><span class="dl">"</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="dl">"</span><span class="s2">professional</span><span class="dl">"</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Check expiry</span>
+    <span class="k">if </span><span class="p">(</span><span class="nf">isPersonaExpired</span><span class="p">())</span> <span class="p">{</span>
+      <span class="nx">localStorage</span><span class="p">.</span><span class="nf">removeItem</span><span class="p">(</span><span class="nx">STORAGE_KEY</span><span class="p">);</span>
+      <span class="nx">localStorage</span><span class="p">.</span><span class="nf">removeItem</span><span class="p">(</span><span class="nx">STORAGE_TIMESTAMP_KEY</span><span class="p">);</span>
+      <span class="k">return</span> <span class="dl">"</span><span class="s2">professional</span><span class="dl">"</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nf">getItem</span><span class="p">(</span><span class="nx">STORAGE_KEY</span><span class="p">)</span> <span class="o">||</span> <span class="dl">"</span><span class="s2">professional</span><span class="dl">"</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Set persona with timestamp</span>
+  <span class="kd">function</span> <span class="nf">setPersona</span><span class="p">(</span><span class="nx">persona</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">localStorage</span><span class="p">.</span><span class="nf">setItem</span><span class="p">(</span><span class="nx">STORAGE_KEY</span><span class="p">,</span> <span class="nx">persona</span><span class="p">);</span>
+    <span class="nx">localStorage</span><span class="p">.</span><span class="nf">setItem</span><span class="p">(</span><span class="nx">STORAGE_TIMESTAMP_KEY</span><span class="p">,</span> <span class="nb">Date</span><span class="p">.</span><span class="nf">now</span><span class="p">().</span><span class="nf">toString</span><span class="p">());</span>
+    <span class="nf">applyPersona</span><span class="p">(</span><span class="nx">persona</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Apply persona to DOM</span>
+  <span class="kd">function</span> <span class="nf">applyPersona</span><span class="p">(</span><span class="nx">persona</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">html</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">;</span>
+
+    <span class="c1">// Add transition class</span>
+    <span class="nx">html</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="dl">"</span><span class="s2">persona-transition</span><span class="dl">"</span><span class="p">);</span>
+
+    <span class="c1">// Set persona attribute</span>
+    <span class="nx">html</span><span class="p">.</span><span class="nf">setAttribute</span><span class="p">(</span><span class="dl">"</span><span class="s2">data-persona</span><span class="dl">"</span><span class="p">,</span> <span class="nx">persona</span><span class="p">);</span>
+
+    <span class="c1">// Show toast notification</span>
+    <span class="nf">showToast</span><span class="p">(</span><span class="nx">persona</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">personal</span><span class="dl">"</span> <span class="p">?</span> <span class="dl">"</span><span class="s2">Welcome to the other side</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">Back to business</span><span class="dl">"</span><span class="p">);</span>
+
+    <span class="c1">// Remove transition class after animation</span>
+    <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">html</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nf">remove</span><span class="p">(</span><span class="dl">"</span><span class="s2">persona-transition</span><span class="dl">"</span><span class="p">);</span>
+    <span class="p">},</span> <span class="mi">600</span><span class="p">);</span>
+
+    <span class="c1">// Toggle personal-only content visibility</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nf">querySelectorAll</span><span class="p">(</span><span class="dl">"</span><span class="s2">.personal-only</span><span class="dl">"</span><span class="p">).</span><span class="nf">forEach</span><span class="p">((</span><span class="nx">el</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="nx">persona</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">personal</span><span class="dl">"</span> <span class="p">?</span> <span class="dl">""</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">none</span><span class="dl">"</span><span class="p">;</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Show toast notification</span>
+  <span class="kd">function</span> <span class="nf">showToast</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Remove existing toast</span>
+    <span class="kd">const</span> <span class="nx">existing</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">.persona-toast</span><span class="dl">"</span><span class="p">);</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">existing</span><span class="p">)</span> <span class="nx">existing</span><span class="p">.</span><span class="nf">remove</span><span class="p">();</span>
+
+    <span class="kd">const</span> <span class="nx">toast</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">createElement</span><span class="p">(</span><span class="dl">"</span><span class="s2">div</span><span class="dl">"</span><span class="p">);</span>
+    <span class="nx">toast</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">persona-toast</span><span class="dl">"</span><span class="p">;</span>
+    <span class="nx">toast</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nx">message</span><span class="p">;</span>
+    <span class="nx">toast</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">=</span> <span class="s2">`
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--global-card-bg-color);
+      color: var(--global-text-color);
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-family: "Space Mono", monospace;
+      font-size: 0.875rem;
+    `</span><span class="p">;</span>
+
+    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nf">appendChild</span><span class="p">(</span><span class="nx">toast</span><span class="p">);</span>
+
+    <span class="c1">// Fade in</span>
+    <span class="nf">requestAnimationFrame</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">toast</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">opacity</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">1</span><span class="dl">"</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="c1">// Fade out and remove</span>
+    <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">toast</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">opacity</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">0</span><span class="dl">"</span><span class="p">;</span>
+      <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">toast</span><span class="p">.</span><span class="nf">remove</span><span class="p">(),</span> <span class="mi">300</span><span class="p">);</span>
+    <span class="p">},</span> <span class="mi">2000</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Add visual hint to profile photo</span>
+  <span class="kd">function</span> <span class="nf">addGlowHint</span><span class="p">(</span><span class="nx">photo</span><span class="p">,</span> <span class="nx">intensity</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">colors</span> <span class="o">=</span> <span class="p">[</span><span class="dl">"</span><span class="s2">#f4a261</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">#e076a0</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">#9d8cff</span><span class="dl">"</span><span class="p">];</span>
+    <span class="kd">const</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">colors</span><span class="p">[</span><span class="nb">Math</span><span class="p">.</span><span class="nf">min</span><span class="p">(</span><span class="nx">intensity</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)];</span>
+    <span class="kd">const</span> <span class="nx">blur</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">+</span> <span class="nx">intensity</span> <span class="o">*</span> <span class="mi">5</span><span class="p">;</span>
+    <span class="nx">photo</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">boxShadow</span> <span class="o">=</span> <span class="s2">`0 0 </span><span class="p">${</span><span class="nx">blur</span><span class="p">}</span><span class="s2">px </span><span class="p">${</span><span class="nx">color</span><span class="p">}</span><span class="s2">`</span><span class="p">;</span>
+    <span class="nx">photo</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">transition</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">box-shadow 0.3s ease</span><span class="dl">"</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Reset photo glow</span>
+  <span class="kd">function</span> <span class="nf">resetGlow</span><span class="p">(</span><span class="nx">photo</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">photo</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">boxShadow</span> <span class="o">=</span> <span class="dl">""</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Handle profile photo click</span>
+  <span class="kd">function</span> <span class="nf">handlePhotoClick</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">photo</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
+
+    <span class="c1">// Clear previous timer</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">clickTimer</span><span class="p">)</span> <span class="nf">clearTimeout</span><span class="p">(</span><span class="nx">clickTimer</span><span class="p">);</span>
+
+    <span class="nx">clickCount</span><span class="o">++</span><span class="p">;</span>
+
+    <span class="c1">// Add glow hint</span>
+    <span class="nf">addGlowHint</span><span class="p">(</span><span class="nx">photo</span><span class="p">,</span> <span class="nx">clickCount</span><span class="p">);</span>
+
+    <span class="k">if </span><span class="p">(</span><span class="nx">clickCount</span> <span class="o">&gt;=</span> <span class="nx">CLICK_THRESHOLD</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// Toggle persona</span>
+      <span class="kd">const</span> <span class="nx">currentPersona</span> <span class="o">=</span> <span class="nf">getPersona</span><span class="p">();</span>
+      <span class="kd">const</span> <span class="nx">newPersona</span> <span class="o">=</span> <span class="nx">currentPersona</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">professional</span><span class="dl">"</span> <span class="p">?</span> <span class="dl">"</span><span class="s2">personal</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">professional</span><span class="dl">"</span><span class="p">;</span>
+      <span class="nf">setPersona</span><span class="p">(</span><span class="nx">newPersona</span><span class="p">);</span>
+
+      <span class="c1">// Reset</span>
+      <span class="nx">clickCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="nf">resetGlow</span><span class="p">(</span><span class="nx">photo</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="c1">// Reset after timeout</span>
+      <span class="nx">clickTimer</span> <span class="o">=</span> <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">clickCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nf">resetGlow</span><span class="p">(</span><span class="nx">photo</span><span class="p">);</span>
+      <span class="p">},</span> <span class="nx">CLICK_TIMEOUT</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Initialize on DOM ready</span>
+  <span class="kd">function</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Apply saved persona immediately (before DOM ready to prevent flash)</span>
+    <span class="kd">const</span> <span class="nx">persona</span> <span class="o">=</span> <span class="nf">getPersona</span><span class="p">();</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nf">setAttribute</span><span class="p">(</span><span class="dl">"</span><span class="s2">data-persona</span><span class="dl">"</span><span class="p">,</span> <span class="nx">persona</span><span class="p">);</span>
+
+    <span class="nb">document</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">DOMContentLoaded</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="c1">// Find profile photo</span>
+      <span class="kd">const</span> <span class="nx">profilePhoto</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">querySelector</span><span class="p">(</span><span class="dl">"</span><span class="s2">.profile img</span><span class="dl">"</span><span class="p">);</span>
+      <span class="k">if </span><span class="p">(</span><span class="nx">profilePhoto</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">profilePhoto</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cursor</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">pointer</span><span class="dl">"</span><span class="p">;</span>
+        <span class="nx">profilePhoto</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">click</span><span class="dl">"</span><span class="p">,</span> <span class="nx">handlePhotoClick</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="c1">// Apply persona (for content visibility)</span>
+      <span class="nf">applyPersona</span><span class="p">(</span><span class="nx">persona</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="nf">init</span><span class="p">();</span>
+<span class="p">})();</span>
+</code></pre></div></div> <p><strong>Step 2: Add script to head.liquid</strong></p> <p>In <code class="language-plaintext highlighter-rouge">_includes/head.liquid</code>, after the theme.js script (~line 73), add:</p> <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;!-- Persona Toggle (Easter Egg) --&gt;
+&lt;script src="<span class="cp">{{</span><span class="w"> </span><span class="s1">'/assets/js/persona.js'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">relative_url</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">bust_file_cache</span><span class="w"> </span><span class="cp">}}</span>"&gt;&lt;/script&gt;
+</code></pre></div></div> <p><strong>Step 3: Test Easter egg</strong></p> <ol> <li>Refresh browser</li> <li>Click profile photo once → subtle glow appears</li> <li>Click again → stronger glow</li> <li>Click third time → mode switches to Personal</li> <li>Refresh page → Personal mode persists</li> <li>Add <code class="language-plaintext highlighter-rouge">?professional</code> to URL → forces Professional mode</li> </ol> <p><strong>Step 4: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add assets/js/persona.js _includes/head.liquid
+git commit <span class="nt">-m</span> <span class="s2">"feat: add Easter egg persona toggle (click profile 3x)"</span>
+</code></pre></div></div> <hr> <h2 id="task-5-create-personal-mode-data-file">Task 5: Create Personal Mode Data File</h2> <p><strong>Files:</strong></p> <ul> <li>Create: <code class="language-plaintext highlighter-rouge">_data/personal.yml</code> </li> </ul> <p><strong>Step 1: Create personal data file</strong></p> <p>Create <code class="language-plaintext highlighter-rouge">_data/personal.yml</code>:</p> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Personal Mode Content</span>
+<span class="c1"># This data is displayed only when Personal Mode is active</span>
+
+<span class="na">heroes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Invoker</span>
+    <span class="na">id</span><span class="pi">:</span> <span class="s">invoker</span>
+    <span class="na">role</span><span class="pi">:</span> <span class="s">Main</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/invoker.png</span>
+
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Rubick</span>
+    <span class="na">id</span><span class="pi">:</span> <span class="s">rubick</span>
+    <span class="na">role</span><span class="pi">:</span> <span class="s">Support</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/rubick.png</span>
+
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Puck</span>
+    <span class="na">id</span><span class="pi">:</span> <span class="s">puck</span>
+    <span class="na">role</span><span class="pi">:</span> <span class="s">Mid</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/puck.png</span>
+
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Earth Spirit</span>
+    <span class="na">id</span><span class="pi">:</span> <span class="s">earth_spirit</span>
+    <span class="na">role</span><span class="pi">:</span> <span class="s">Roamer</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/earth_spirit.png</span>
+
+<span class="na">currently</span><span class="pi">:</span>
+  <span class="na">playing</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Dota</span><span class="nv"> </span><span class="s">2"</span>
+  <span class="na">rank</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Ancient</span><span class="nv"> </span><span class="s">III"</span>
+  <span class="na">reading</span><span class="pi">:</span> <span class="s2">"</span><span class="s">The</span><span class="nv"> </span><span class="s">Alignment</span><span class="nv"> </span><span class="s">Problem"</span>
+  <span class="na">watching</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Frieren"</span>
+</code></pre></div></div> <p><strong>Step 2: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add _data/personal.yml
+git commit <span class="nt">-m</span> <span class="s2">"feat: add personal mode data (Dota heroes, currently)"</span>
+</code></pre></div></div> <hr> <h2 id="task-6-create-hero-pool-component">Task 6: Create Hero Pool Component</h2> <p><strong>Files:</strong></p> <ul> <li>Create: <code class="language-plaintext highlighter-rouge">_includes/hero-pool.liquid</code> </li> <li>Create: <code class="language-plaintext highlighter-rouge">_sass/_components.scss</code> </li> <li>Modify: <code class="language-plaintext highlighter-rouge">assets/css/main.scss</code> (add import)</li> </ul> <p><strong>Step 1: Create hero pool liquid component</strong></p> <p>Create <code class="language-plaintext highlighter-rouge">_includes/hero-pool.liquid</code>:</p> <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">heroes</span><span class="w"> </span><span class="cp">%}</span>
+  &lt;div class="hero-pool personal-only" style="display: none;"&gt;
+    &lt;h3 class="hero-pool-title"&gt;Hero Pool&lt;/h3&gt;
+    &lt;div class="hero-pool-grid"&gt;
+      <span class="cp">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">hero</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">heroes</span><span class="w"> </span><span class="cp">%}</span>
+        &lt;div class="hero-card" title="<span class="cp">{{</span><span class="w"> </span><span class="nv">hero</span><span class="p">.</span><span class="nv">name</span><span class="w"> </span><span class="cp">}}</span> - <span class="cp">{{</span><span class="w"> </span><span class="nv">hero</span><span class="p">.</span><span class="nv">role</span><span class="w"> </span><span class="cp">}}</span>"&gt;
+          &lt;img
+            src="<span class="cp">{{</span><span class="w"> </span><span class="nv">hero</span><span class="p">.</span><span class="nv">image</span><span class="w"> </span><span class="cp">}}</span>"
+            alt="<span class="cp">{{</span><span class="w"> </span><span class="nv">hero</span><span class="p">.</span><span class="nv">name</span><span class="w"> </span><span class="cp">}}</span>"
+            class="hero-portrait"
+            loading="lazy"
+          &gt;
+          &lt;span class="hero-name"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">hero</span><span class="p">.</span><span class="nv">name</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+          <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">hero</span><span class="p">.</span><span class="nv">role</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">'Main'</span><span class="w"> </span><span class="cp">%}</span>
+            &lt;span class="hero-main-badge"&gt;Main&lt;/span&gt;
+          <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+        &lt;/div&gt;
+      <span class="cp">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="cp">%}</span>
+    &lt;/div&gt;
+  &lt;/div&gt;
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div></div> <p><strong>Step 2: Create components SCSS file</strong></p> <p>Create <code class="language-plaintext highlighter-rouge">_sass/_components.scss</code>:</p> <div class="language-scss highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*******************************************************************************
+ * Personal Mode Components
+ ******************************************************************************/</span>
+
+<span class="c1">// Hero Pool</span>
+<span class="nc">.hero-pool</span> <span class="p">{</span>
+  <span class="nl">margin</span><span class="p">:</span> <span class="m">2rem</span> <span class="m">0</span><span class="p">;</span>
+  <span class="nl">padding</span><span class="p">:</span> <span class="m">1</span><span class="mi">.5rem</span><span class="p">;</span>
+  <span class="nl">background</span><span class="p">:</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-card-bg-color</span><span class="p">);</span>
+  <span class="nl">border-radius</span><span class="p">:</span> <span class="m">12px</span><span class="p">;</span>
+  <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-divider-color</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nc">.hero-pool-title</span> <span class="p">{</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">1</span><span class="mi">.25rem</span><span class="p">;</span>
+  <span class="nl">margin-bottom</span><span class="p">:</span> <span class="m">1rem</span><span class="p">;</span>
+  <span class="nl">font-family</span><span class="p">:</span> <span class="nv">$font-family-mono</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.hero-pool-grid</span> <span class="p">{</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="nb">flex</span><span class="p">;</span>
+  <span class="nl">gap</span><span class="p">:</span> <span class="m">1rem</span><span class="p">;</span>
+  <span class="nl">flex-wrap</span><span class="p">:</span> <span class="nb">wrap</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.hero-card</span> <span class="p">{</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="nb">flex</span><span class="p">;</span>
+  <span class="nl">flex-direction</span><span class="p">:</span> <span class="nb">column</span><span class="p">;</span>
+  <span class="nl">align-items</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+  <span class="nl">gap</span><span class="p">:</span> <span class="m">0</span><span class="mi">.5rem</span><span class="p">;</span>
+  <span class="nl">padding</span><span class="p">:</span> <span class="m">0</span><span class="mi">.75rem</span><span class="p">;</span>
+  <span class="nl">border-radius</span><span class="p">:</span> <span class="m">8px</span><span class="p">;</span>
+  <span class="nl">background</span><span class="p">:</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-bg-color</span><span class="p">);</span>
+  <span class="nl">transition</span><span class="p">:</span>
+    <span class="n">transform</span> <span class="m">0</span><span class="mi">.2s</span> <span class="nb">ease</span><span class="o">,</span>
+    <span class="n">box-shadow</span> <span class="m">0</span><span class="mi">.2s</span> <span class="nb">ease</span><span class="p">;</span>
+  <span class="nl">cursor</span><span class="p">:</span> <span class="nb">default</span><span class="p">;</span>
+  <span class="nl">position</span><span class="p">:</span> <span class="nb">relative</span><span class="p">;</span>
+
+  <span class="k">&amp;</span><span class="nd">:hover</span> <span class="p">{</span>
+    <span class="nl">transform</span><span class="p">:</span> <span class="nf">translateY</span><span class="p">(</span><span class="m">-4px</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nt">html</span><span class="o">[</span><span class="nt">data-persona</span><span class="o">=</span><span class="s2">"personal"</span><span class="o">]</span> <span class="nc">.hero-card</span><span class="nd">:hover</span> <span class="p">{</span>
+  <span class="nl">box-shadow</span><span class="p">:</span> <span class="m">0</span> <span class="m">8px</span> <span class="m">20px</span> <span class="nf">rgba</span><span class="p">(</span><span class="nv">$personal-gradient-mid</span><span class="o">,</span> <span class="m">0</span><span class="mi">.3</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nc">.hero-portrait</span> <span class="p">{</span>
+  <span class="nl">width</span><span class="p">:</span> <span class="m">64px</span><span class="p">;</span>
+  <span class="nl">height</span><span class="p">:</span> <span class="m">64px</span><span class="p">;</span>
+  <span class="nl">border-radius</span><span class="p">:</span> <span class="m">50%</span><span class="p">;</span>
+  <span class="nl">object-fit</span><span class="p">:</span> <span class="nb">cover</span><span class="p">;</span>
+  <span class="nl">border</span><span class="p">:</span> <span class="m">2px</span> <span class="nb">solid</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-divider-color</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nt">html</span><span class="o">[</span><span class="nt">data-persona</span><span class="o">=</span><span class="s2">"personal"</span><span class="o">]</span> <span class="nc">.hero-portrait</span> <span class="p">{</span>
+  <span class="nl">border-color</span><span class="p">:</span> <span class="nb">transparent</span><span class="p">;</span>
+  <span class="nl">background</span><span class="p">:</span>
+    <span class="nf">linear-gradient</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-card-bg-color</span><span class="p">)</span><span class="o">,</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-card-bg-color</span><span class="p">))</span> <span class="n">padding-box</span><span class="o">,</span>
+    <span class="nf">linear-gradient</span><span class="p">(</span><span class="m">135deg</span><span class="o">,</span> <span class="nv">$personal-gradient-start</span><span class="o">,</span> <span class="nv">$personal-gradient-mid</span><span class="o">,</span> <span class="nv">$personal-gradient-end</span><span class="p">)</span> <span class="nb">border-box</span><span class="p">;</span>
+  <span class="nl">border</span><span class="p">:</span> <span class="m">2px</span> <span class="nb">solid</span> <span class="nb">transparent</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.hero-name</span> <span class="p">{</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">0</span><span class="mi">.75rem</span><span class="p">;</span>
+  <span class="nl">font-family</span><span class="p">:</span> <span class="nv">$font-family-mono</span><span class="p">;</span>
+  <span class="nl">color</span><span class="p">:</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-text-color-light</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nc">.hero-main-badge</span> <span class="p">{</span>
+  <span class="nl">position</span><span class="p">:</span> <span class="nb">absolute</span><span class="p">;</span>
+  <span class="nl">top</span><span class="p">:</span> <span class="m">4px</span><span class="p">;</span>
+  <span class="nl">right</span><span class="p">:</span> <span class="m">4px</span><span class="p">;</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">0</span><span class="mi">.625rem</span><span class="p">;</span>
+  <span class="nl">padding</span><span class="p">:</span> <span class="m">2px</span> <span class="m">6px</span><span class="p">;</span>
+  <span class="nl">border-radius</span><span class="p">:</span> <span class="m">4px</span><span class="p">;</span>
+  <span class="nl">font-family</span><span class="p">:</span> <span class="nv">$font-family-mono</span><span class="p">;</span>
+  <span class="nl">background</span><span class="p">:</span> <span class="nv">$personal-gradient-start</span><span class="p">;</span>
+  <span class="nl">color</span><span class="p">:</span> <span class="mh">#1a1a2e</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Currently Widget</span>
+<span class="nc">.currently-widget</span> <span class="p">{</span>
+  <span class="nl">margin</span><span class="p">:</span> <span class="m">1</span><span class="mi">.5rem</span> <span class="m">0</span><span class="p">;</span>
+  <span class="nl">padding</span><span class="p">:</span> <span class="m">1rem</span> <span class="m">1</span><span class="mi">.5rem</span><span class="p">;</span>
+  <span class="nl">background</span><span class="p">:</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-card-bg-color</span><span class="p">);</span>
+  <span class="nl">border-radius</span><span class="p">:</span> <span class="m">8px</span><span class="p">;</span>
+  <span class="nl">border-left</span><span class="p">:</span> <span class="m">3px</span> <span class="nb">solid</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-theme-color</span><span class="p">);</span>
+  <span class="nl">font-family</span><span class="p">:</span> <span class="nv">$font-family-mono</span><span class="p">;</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">0</span><span class="mi">.875rem</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.currently-item</span> <span class="p">{</span>
+  <span class="nl">display</span><span class="p">:</span> <span class="nb">flex</span><span class="p">;</span>
+  <span class="nl">gap</span><span class="p">:</span> <span class="m">0</span><span class="mi">.5rem</span><span class="p">;</span>
+  <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span><span class="mi">.5rem</span> <span class="m">0</span><span class="p">;</span>
+
+  <span class="nc">.label</span> <span class="p">{</span>
+    <span class="nl">color</span><span class="p">:</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-text-color-light</span><span class="p">);</span>
+    <span class="nl">min-width</span><span class="p">:</span> <span class="m">80px</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nc">.value</span> <span class="p">{</span>
+    <span class="nl">color</span><span class="p">:</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-text-color</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nt">html</span><span class="o">[</span><span class="nt">data-persona</span><span class="o">=</span><span class="s2">"personal"</span><span class="o">]</span> <span class="nc">.currently-widget</span> <span class="p">{</span>
+  <span class="nl">border-left-color</span><span class="p">:</span> <span class="nv">$personal-gradient-mid</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p><strong>Step 3: Import components in main.scss</strong></p> <p>In <code class="language-plaintext highlighter-rouge">assets/css/main.scss</code>, add the import:</p> <div class="language-scss highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">@import</span> <span class="s2">"variables"</span><span class="o">,</span> <span class="s2">"typography"</span><span class="o">,</span> <span class="s2">"themes"</span><span class="o">,</span> <span class="s2">"components"</span><span class="o">,</span> <span class="s2">"layout"</span><span class="p">;</span> <span class="c1">// ... rest</span>
+</code></pre></div></div> <p><strong>Step 4: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add _includes/hero-pool.liquid _sass/_components.scss assets/css/main.scss
+git commit <span class="nt">-m</span> <span class="s2">"feat: add hero pool component for personal mode"</span>
+</code></pre></div></div> <hr> <h2 id="task-7-create-currently-widget-component">Task 7: Create Currently Widget Component</h2> <p><strong>Files:</strong></p> <ul> <li>Create: <code class="language-plaintext highlighter-rouge">_includes/currently.liquid</code> </li> </ul> <p><strong>Step 1: Create currently widget</strong></p> <p>Create <code class="language-plaintext highlighter-rouge">_includes/currently.liquid</code>:</p> <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">currently</span><span class="w"> </span><span class="cp">%}</span>
+  &lt;div class="currently-widget personal-only" style="display: none;"&gt;
+    &lt;div class="currently-title"&gt;Currently&lt;/div&gt;
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">currently</span><span class="p">.</span><span class="nv">playing</span><span class="w"> </span><span class="cp">%}</span>
+      &lt;div class="currently-item"&gt;
+        &lt;span class="label"&gt;Playing:&lt;/span&gt;
+        &lt;span class="value"&gt;
+          <span class="cp">{{-</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">currently</span><span class="p">.</span><span class="nv">playing</span><span class="w"> </span><span class="cp">-}}</span>
+          <span class="cp">{%-</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">currently</span><span class="p">.</span><span class="nv">rank</span><span class="w"> </span><span class="cp">%}</span> (<span class="cp">{{</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">currently</span><span class="p">.</span><span class="nv">rank</span><span class="w"> </span><span class="cp">}}</span>)<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">-%}</span>
+        &lt;/span&gt;
+      &lt;/div&gt;
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">currently</span><span class="p">.</span><span class="nv">reading</span><span class="w"> </span><span class="cp">%}</span>
+      &lt;div class="currently-item"&gt;
+        &lt;span class="label"&gt;Reading:&lt;/span&gt;
+        &lt;span class="value"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">currently</span><span class="p">.</span><span class="nv">reading</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+      &lt;/div&gt;
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">currently</span><span class="p">.</span><span class="nv">watching</span><span class="w"> </span><span class="cp">%}</span>
+      &lt;div class="currently-item"&gt;
+        &lt;span class="label"&gt;Watching:&lt;/span&gt;
+        &lt;span class="value"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">site</span><span class="p">.</span><span class="nv">data</span><span class="p">.</span><span class="nv">personal</span><span class="p">.</span><span class="nv">currently</span><span class="p">.</span><span class="nv">watching</span><span class="w"> </span><span class="cp">}}</span>&lt;/span&gt;
+      &lt;/div&gt;
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+  &lt;/div&gt;
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div></div> <p><strong>Step 2: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add _includes/currently.liquid
+git commit <span class="nt">-m</span> <span class="s2">"feat: add currently widget for personal mode"</span>
+</code></pre></div></div> <hr> <h2 id="task-8-integrate-personal-components-into-about-layout">Task 8: Integrate Personal Components into About Layout</h2> <p><strong>Files:</strong></p> <ul> <li>Modify: <code class="language-plaintext highlighter-rouge">_layouts/about.liquid</code> </li> </ul> <p><strong>Step 1: Add personal components to about layout</strong></p> <p>In <code class="language-plaintext highlighter-rouge">_layouts/about.liquid</code>, after the profile section (around line 38, after the <code class="language-plaintext highlighter-rouge">&lt;/div&gt;</code> that closes the profile):</p> <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">page</span><span class="p">.</span><span class="nv">profile</span><span class="w"> </span><span class="cp">%}</span>
+      &lt;div class="profile float-<span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">page</span><span class="p">.</span><span class="nv">profile</span><span class="p">.</span><span class="nv">align</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">'left'</span><span class="w"> </span><span class="cp">%}</span>left<span class="cp">{%</span><span class="w"> </span><span class="nt">else</span><span class="w"> </span><span class="cp">%}</span>right<span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>"&gt;
+        &lt;!-- ... existing profile code ... --&gt;
+      &lt;/div&gt;
+
+      &lt;!-- Personal Mode Components --&gt;
+      <span class="cp">{%</span><span class="w"> </span><span class="nt">include</span><span class="w"> </span>currently.liquid<span class="w"> </span><span class="cp">%}</span>
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">endif</span><span class="w"> </span><span class="cp">%}</span>
+
+    &lt;div class="clearfix"&gt;<span class="cp">{{</span><span class="w"> </span><span class="nv">content</span><span class="w"> </span><span class="cp">}}</span>&lt;/div&gt;
+
+    &lt;!-- Hero Pool (after main content, before news) --&gt;
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">include</span><span class="w"> </span>hero-pool.liquid<span class="w"> </span><span class="cp">%}</span>
+
+    &lt;!-- News --&gt;
+    <span class="cp">{%</span><span class="w"> </span><span class="nt">if</span><span class="w"> </span><span class="nv">page</span><span class="p">.</span><span class="nv">announcements</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="nv">page</span><span class="p">.</span><span class="nv">announcements</span><span class="p">.</span><span class="nv">enabled</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div></div> <p><strong>Step 2: Test integration</strong></p> <ol> <li>Refresh browser</li> <li>Activate personal mode (click profile 3x)</li> <li>Verify Hero Pool appears below bio</li> <li>Verify Currently widget appears near profile</li> </ol> <p><strong>Step 3: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add _layouts/about.liquid
+git commit <span class="nt">-m</span> <span class="s2">"feat: integrate personal mode components into about layout"</span>
+</code></pre></div></div> <hr> <h2 id="task-9-add-profile-photo-animated-border-for-personal-mode">Task 9: Add Profile Photo Animated Border for Personal Mode</h2> <p><strong>Files:</strong></p> <ul> <li>Modify: <code class="language-plaintext highlighter-rouge">_sass/_base.scss</code> (profile styles)</li> </ul> <p><strong>Step 1: Add animated gradient border</strong></p> <p>In <code class="language-plaintext highlighter-rouge">_sass/_base.scss</code>, find the <code class="language-plaintext highlighter-rouge">.profile</code> section (~line 195) and add personal mode styles:</p> <div class="language-scss highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Profile photo animated border for Personal Mode</span>
+<span class="nt">html</span><span class="o">[</span><span class="nt">data-persona</span><span class="o">=</span><span class="s2">"personal"</span><span class="o">]</span> <span class="p">{</span>
+  <span class="nc">.profile</span> <span class="p">{</span>
+    <span class="nt">img</span> <span class="p">{</span>
+      <span class="nl">border</span><span class="p">:</span> <span class="m">3px</span> <span class="nb">solid</span> <span class="nb">transparent</span><span class="p">;</span>
+      <span class="nl">background</span><span class="p">:</span>
+        <span class="nf">linear-gradient</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-card-bg-color</span><span class="p">)</span><span class="o">,</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">global-card-bg-color</span><span class="p">))</span> <span class="n">padding-box</span><span class="o">,</span>
+        <span class="nf">linear-gradient</span><span class="p">(</span><span class="m">135deg</span><span class="o">,</span> <span class="nv">$personal-gradient-start</span><span class="o">,</span> <span class="nv">$personal-gradient-mid</span><span class="o">,</span> <span class="nv">$personal-gradient-end</span><span class="o">,</span> <span class="nv">$personal-gradient-start</span><span class="p">)</span> <span class="nb">border-box</span><span class="p">;</span>
+      <span class="nl">background-size</span><span class="p">:</span>
+        <span class="m">100%</span> <span class="m">100%</span><span class="o">,</span>
+        <span class="m">300%</span> <span class="m">300%</span><span class="p">;</span>
+      <span class="nl">animation</span><span class="p">:</span> <span class="n">gradient-rotate</span> <span class="m">4s</span> <span class="nb">ease</span> <span class="nb">infinite</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">@keyframes</span> <span class="nt">gradient-rotate</span> <span class="p">{</span>
+  <span class="nt">0</span><span class="nv">%</span><span class="o">,</span>
+  <span class="nt">100</span><span class="nv">%</span> <span class="p">{</span>
+    <span class="nl">background-position</span><span class="p">:</span>
+      <span class="m">0%</span> <span class="m">0%</span><span class="o">,</span>
+      <span class="m">0%</span> <span class="m">50%</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nt">50</span><span class="nv">%</span> <span class="p">{</span>
+    <span class="nl">background-position</span><span class="p">:</span>
+      <span class="m">0%</span> <span class="m">0%</span><span class="o">,</span>
+      <span class="m">100%</span> <span class="m">50%</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div> <p><strong>Step 2: Test animation</strong></p> <ol> <li>Activate personal mode</li> <li>Verify profile photo has animated gradient border</li> </ol> <p><strong>Step 3: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add _sass/_base.scss
+git commit <span class="nt">-m</span> <span class="s2">"feat: add animated gradient border to profile photo in personal mode"</span>
+</code></pre></div></div> <hr> <h2 id="task-10-polish-and-accessibility-review">Task 10: Polish and Accessibility Review</h2> <p><strong>Files:</strong></p> <ul> <li>Modify: <code class="language-plaintext highlighter-rouge">_sass/_themes.scss</code> (ensure contrast)</li> <li>Modify: <code class="language-plaintext highlighter-rouge">assets/js/persona.js</code> (keyboard support)</li> </ul> <p><strong>Step 1: Verify color contrast in personal mode</strong></p> <p>Check contrast ratios:</p> <ul> <li>Text (#e8e4df) on background (#1a1a2e): ~11:1 ✓</li> <li>Secondary text (#9d99b3) on background (#1a1a2e): ~6:1 ✓</li> </ul> <p><strong>Step 2: Add keyboard support to profile photo</strong></p> <p>In <code class="language-plaintext highlighter-rouge">assets/js/persona.js</code>, update the init function to add keyboard support:</p> <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// In the DOMContentLoaded callback, after finding profilePhoto:</span>
+<span class="k">if </span><span class="p">(</span><span class="nx">profilePhoto</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">profilePhoto</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cursor</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">pointer</span><span class="dl">"</span><span class="p">;</span>
+  <span class="nx">profilePhoto</span><span class="p">.</span><span class="nf">setAttribute</span><span class="p">(</span><span class="dl">"</span><span class="s2">tabindex</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">0</span><span class="dl">"</span><span class="p">);</span>
+  <span class="nx">profilePhoto</span><span class="p">.</span><span class="nf">setAttribute</span><span class="p">(</span><span class="dl">"</span><span class="s2">role</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">button</span><span class="dl">"</span><span class="p">);</span>
+  <span class="nx">profilePhoto</span><span class="p">.</span><span class="nf">setAttribute</span><span class="p">(</span><span class="dl">"</span><span class="s2">aria-label</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">Click 3 times to toggle persona mode</span><span class="dl">"</span><span class="p">);</span>
+  <span class="nx">profilePhoto</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">click</span><span class="dl">"</span><span class="p">,</span> <span class="nx">handlePhotoClick</span><span class="p">);</span>
+  <span class="nx">profilePhoto</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">keydown</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">key</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">Enter</span><span class="dl">"</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">key</span> <span class="o">===</span> <span class="dl">"</span><span class="s2"> </span><span class="dl">"</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">e</span><span class="p">.</span><span class="nf">preventDefault</span><span class="p">();</span>
+      <span class="nf">handlePhotoClick</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div></div> <p><strong>Step 3: Test accessibility</strong></p> <ol> <li>Tab to profile photo</li> <li>Press Enter 3 times → should toggle persona</li> <li>Verify focus states visible in both modes</li> </ol> <p><strong>Step 4: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add _sass/_themes.scss assets/js/persona.js
+git commit <span class="nt">-m</span> <span class="s2">"feat: polish accessibility for persona toggle"</span>
+</code></pre></div></div> <hr> <h2 id="task-11-update-personal-data-with-your-actual-heroes">Task 11: Update Personal Data with Your Actual Heroes</h2> <p><strong>Files:</strong></p> <ul> <li>Modify: <code class="language-plaintext highlighter-rouge">_data/personal.yml</code> </li> </ul> <p><strong>Step 1: Update with real data</strong></p> <p>Edit <code class="language-plaintext highlighter-rouge">_data/personal.yml</code> with your actual Dota heroes and current interests. The structure is already correct, just update the values.</p> <p><strong>Step 2: Commit</strong></p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add _data/personal.yml
+git commit <span class="nt">-m</span> <span class="s2">"chore: update personal mode data with actual content"</span>
+</code></pre></div></div> <hr> <h2 id="summary-checklist">Summary Checklist</h2> <ul class="task-list"> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 1: Typography fonts (Space Grotesk, Satoshi, Space Mono)</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 2: Professional mode colors (warm beige + rust)</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 3: Personal mode CSS (city-pop dark + gradients)</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 4: Easter egg JavaScript (3-click toggle)</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 5: Personal data file (heroes, currently)</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 6: Hero Pool component</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 7: Currently widget component</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 8: About layout integration</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 9: Animated profile border</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 10: Accessibility polish</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Task 11: Real personal data</li> </ul> <hr> <h2 id="testing-checklist">Testing Checklist</h2> <p>After all tasks complete:</p> <ol> <li> <p><strong>Professional Mode (default)</strong></p> <ul class="task-list"> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Warm beige background (#FAF9F7)</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Rust accent color (#c75b39)</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Space Grotesk headings</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>No personal content visible</li> </ul> </li> <li> <p><strong>Easter Egg Trigger</strong></p> <ul class="task-list"> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Click profile 1x → subtle glow</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Click profile 2x → stronger glow</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Click profile 3x → mode switches</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Toast notification appears</li> </ul> </li> <li> <p><strong>Personal Mode</strong></p> <ul class="task-list"> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Dark twilight background (#1a1a2e)</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Gradient text on headings</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Card glow effects</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Hero Pool section visible</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Currently widget visible</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Animated profile border</li> </ul> </li> <li> <p><strong>Persistence</strong></p> <ul class="task-list"> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Refresh maintains mode</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>?professional param forces professional</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Mode expires after 24 hours</li> </ul> </li> <li> <p><strong>Accessibility</strong></p> <ul class="task-list"> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Keyboard navigation works</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Color contrast passes WCAG AA</li> <li class="task-list-item"> <input type="checkbox" class="task-list-item-checkbox" disabled>Focus states visible</li> </ul> </li> </ol> </body></html>

@@ -15,26 +15,26 @@ The site has two modes, discoverable via an Easter egg (clicking profile photo 3
 
 ### Professional Mode Palette
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--bg-primary` | `#FAF9F7` | Warm beige background |
-| `--bg-surface` | `#FFFFFF` | Cards, elevated surfaces |
-| `--text-primary` | `#2d2d2d` | Headings, body text |
-| `--text-secondary` | `#6b6b6b` | Meta, captions |
-| `--accent` | `#c75b39` | Links, buttons, highlights |
-| `--accent-hover` | `#a84a2e` | Hover states |
+| Token              | Value     | Usage                      |
+| ------------------ | --------- | -------------------------- |
+| `--bg-primary`     | `#FAF9F7` | Warm beige background      |
+| `--bg-surface`     | `#FFFFFF` | Cards, elevated surfaces   |
+| `--text-primary`   | `#2d2d2d` | Headings, body text        |
+| `--text-secondary` | `#6b6b6b` | Meta, captions             |
+| `--accent`         | `#c75b39` | Links, buttons, highlights |
+| `--accent-hover`   | `#a84a2e` | Hover states               |
 
 ### Personal Mode Palette
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--bg-primary` | `#1a1a2e` | Deep twilight background |
-| `--bg-surface` | `#252542` | Cards, elevated surfaces |
-| `--text-primary` | `#e8e4df` | Headings, body text |
-| `--text-secondary` | `#9d99b3` | Meta, captions |
-| `--gradient-start` | `#f4a261` | Peach - gradient accent |
-| `--gradient-mid` | `#e076a0` | Pink - gradient accent |
-| `--gradient-end` | `#9d8cff` | Lavender - gradient accent |
+| Token              | Value     | Usage                      |
+| ------------------ | --------- | -------------------------- |
+| `--bg-primary`     | `#1a1a2e` | Deep twilight background   |
+| `--bg-surface`     | `#252542` | Cards, elevated surfaces   |
+| `--text-primary`   | `#e8e4df` | Headings, body text        |
+| `--text-secondary` | `#9d99b3` | Meta, captions             |
+| `--gradient-start` | `#f4a261` | Peach - gradient accent    |
+| `--gradient-mid`   | `#e076a0` | Pink - gradient accent     |
+| `--gradient-end`   | `#9d8cff` | Lavender - gradient accent |
 
 ---
 
@@ -42,11 +42,11 @@ The site has two modes, discoverable via an Easter egg (clicking profile photo 3
 
 Full refresh using geometric, retro-modern fonts:
 
-| Role | Font | Weights | Usage |
-|------|------|---------|-------|
-| Headings | Space Grotesk | 500, 600, 700 | H1-H6, nav items |
-| Body | Satoshi | 400, 500 | Paragraphs, UI text |
-| Mono | Space Mono | 400 | Code, metadata, dates |
+| Role     | Font          | Weights       | Usage                 |
+| -------- | ------------- | ------------- | --------------------- |
+| Headings | Space Grotesk | 500, 600, 700 | H1-H6, nav items      |
+| Body     | Satoshi       | 400, 500      | Paragraphs, UI text   |
+| Mono     | Space Mono    | 400           | Code, metadata, dates |
 
 ### Typography Scale
 
@@ -61,7 +61,7 @@ Meta: 0.875rem, monospace, secondary color
 ### Google Fonts Import
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400&display=swap");
 ```
 
 Note: Satoshi requires self-hosting from [Fontshare](https://www.fontshare.com/fonts/satoshi) or using a fallback.
@@ -99,31 +99,31 @@ Both modes use the same al-folio layout structure. Differences are purely visual
 
 ### Navbar
 
-| Mode | Background | Active Item | Hover |
-|------|------------|-------------|-------|
+| Mode         | Background      | Active Item    | Hover         |
+| ------------ | --------------- | -------------- | ------------- |
 | Professional | Beige `#FAF9F7` | Rust underline | Subtle darken |
-| Personal | Dark `#1a1a2e` | Gradient text | City-pop glow |
+| Personal     | Dark `#1a1a2e`  | Gradient text  | City-pop glow |
 
 ### Profile Section
 
-| Mode | Photo Border | Subtitle | Extra |
-|------|--------------|----------|-------|
-| Professional | Rust ring on hover | "Ph.D. Candidate @ MIT" | Clean, minimal |
-| Personal | Animated gradient border | "Dota2ForLife" prominent | Steam status indicator |
+| Mode         | Photo Border             | Subtitle                 | Extra                  |
+| ------------ | ------------------------ | ------------------------ | ---------------------- |
+| Professional | Rust ring on hover       | "Ph.D. Candidate @ MIT"  | Clean, minimal         |
+| Personal     | Animated gradient border | "Dota2ForLife" prominent | Steam status indicator |
 
 ### Cards (Publications, Projects, Blog)
 
-| Mode | Background | Shadow | Hover |
-|------|------------|--------|-------|
-| Professional | White `#FFFFFF` | Subtle gray | Rust accent border |
-| Personal | Dark `#252542` | Soft glow | Gradient border-top |
+| Mode         | Background      | Shadow      | Hover               |
+| ------------ | --------------- | ----------- | ------------------- |
+| Professional | White `#FFFFFF` | Subtle gray | Rust accent border  |
+| Personal     | Dark `#252542`  | Soft glow   | Gradient border-top |
 
 ### Code Blocks
 
-| Mode | Background | Syntax Accent |
-|------|------------|---------------|
-| Professional | Light gray `#f5f5f5` | Rust highlights |
-| Personal | Dark terminal `#1e1e2e` | City-pop gradient keywords |
+| Mode         | Background              | Syntax Accent              |
+| ------------ | ----------------------- | -------------------------- |
+| Professional | Light gray `#f5f5f5`    | Rust highlights            |
+| Personal     | Dark terminal `#1e1e2e` | City-pop gradient keywords |
 
 ---
 
@@ -184,28 +184,33 @@ _data/
 ## Implementation Phases
 
 ### Phase 1: Foundation
+
 - Add Space Grotesk, Satoshi, Space Mono fonts
 - Update color variables to warm beige + rust
 - Adjust components to new color scheme
 
 ### Phase 2: Personal Mode Styling
+
 - Add `[data-persona="personal"]` CSS rules
 - Dark colors, gradient accents, glow effects
 - Code block theming
 
 ### Phase 3: Easter Egg Interaction
+
 - Create `persona-toggle.js` with click counter
 - Visual hints on profile photo
 - Smooth transition animation
 - localStorage persistence
 
 ### Phase 4: Personal Mode Content
+
 - Create `_data/personal.yml`
 - Build `hero-pool.liquid` component
 - Build `currently.liquid` widget
 - Conditional rendering in about layout
 
 ### Phase 5: Polish
+
 - Transition timing refinement
 - Optional sound effect toggle
 - Dark/light mode compatibility within each persona
@@ -216,11 +221,11 @@ _data/
 
 ## Summary Table
 
-| Element | Professional Mode | Personal Mode |
-|---------|------------------|---------------|
-| Background | `#FAF9F7` warm beige | `#1a1a2e` twilight |
-| Accent | `#c75b39` rust | Gradient (peach→lavender) |
-| Typography | Space Grotesk + Satoshi | Same + gradient headers |
-| Trigger | Default | Click profile 3x |
-| Special content | — | Hero Pool, Currently |
-| Vibe | Scholarly, minimal | City-pop, cozy gaming den |
+| Element         | Professional Mode       | Personal Mode             |
+| --------------- | ----------------------- | ------------------------- |
+| Background      | `#FAF9F7` warm beige    | `#1a1a2e` twilight        |
+| Accent          | `#c75b39` rust          | Gradient (peach→lavender) |
+| Typography      | Space Grotesk + Satoshi | Same + gradient headers   |
+| Trigger         | Default                 | Click profile 3x          |
+| Special content | —                       | Hero Pool, Currently      |
+| Vibe            | Scholarly, minimal      | City-pop, cozy gaming den |
