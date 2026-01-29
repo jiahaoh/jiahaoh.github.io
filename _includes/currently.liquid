@@ -1,23 +1,26 @@
 {% if site.data.personal.currently %}
-<div class="currently-widget personal-only" style="display: none;">
-  <div class="currently-title">Currently</div>
-  {% if site.data.personal.currently.playing %}
-  <div class="currently-item">
-    <span class="label">Playing:</span>
-    <span class="value">{{ site.data.personal.currently.playing }}{% if site.data.personal.currently.rank %} ({{ site.data.personal.currently.rank }}){% endif %}</span>
+  <div class="currently-widget personal-only" style="display: none;">
+    <div class="currently-title">Currently</div>
+    {% if site.data.personal.currently.playing %}
+      <div class="currently-item">
+        <span class="label">Playing:</span>
+        <span class="value">
+          {{- site.data.personal.currently.playing -}}
+          {%- if site.data.personal.currently.rank %} ({{ site.data.personal.currently.rank }}){% endif -%}
+        </span>
+      </div>
+    {% endif %}
+    {% if site.data.personal.currently.reading %}
+      <div class="currently-item">
+        <span class="label">Reading:</span>
+        <span class="value">{{ site.data.personal.currently.reading }}</span>
+      </div>
+    {% endif %}
+    {% if site.data.personal.currently.watching %}
+      <div class="currently-item">
+        <span class="label">Watching:</span>
+        <span class="value">{{ site.data.personal.currently.watching }}</span>
+      </div>
+    {% endif %}
   </div>
-  {% endif %}
-  {% if site.data.personal.currently.reading %}
-  <div class="currently-item">
-    <span class="label">Reading:</span>
-    <span class="value">{{ site.data.personal.currently.reading }}</span>
-  </div>
-  {% endif %}
-  {% if site.data.personal.currently.watching %}
-  <div class="currently-item">
-    <span class="label">Watching:</span>
-    <span class="value">{{ site.data.personal.currently.watching }}</span>
-  </div>
-  {% endif %}
-</div>
 {% endif %}

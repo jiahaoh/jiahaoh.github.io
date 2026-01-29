@@ -1,3 +1,7 @@
+---
+render_with_liquid: false
+---
+
 # Dual Persona Portfolio Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
@@ -13,6 +17,7 @@
 ## Task 1: Add New Typography Fonts
 
 **Files:**
+
 - Modify: `_config.yml:426-428` (Google Fonts URL)
 - Create: `assets/fonts/Satoshi-Variable.woff2` (download from Fontshare)
 - Create: `_sass/_typography.scss`
@@ -23,14 +28,15 @@
 In `_config.yml`, find the `google_fonts` section (~line 426) and replace:
 
 ```yaml
-  google_fonts:
-    url:
-      fonts: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
+google_fonts:
+  url:
+    fonts: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
 ```
 
 **Step 2: Download Satoshi font**
 
 Run:
+
 ```bash
 mkdir -p assets/fonts
 curl -L "https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" -o assets/css/satoshi.css
@@ -48,8 +54,18 @@ Create `_sass/_typography.scss`:
  ******************************************************************************/
 
 // Font stacks
-$font-family-heading: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-$font-family-body: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+$font-family-heading:
+  "Space Grotesk",
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  sans-serif;
+$font-family-body:
+  "Satoshi",
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  sans-serif;
 $font-family-mono: "Space Mono", "SF Mono", Consolas, monospace;
 
 // Apply typography
@@ -57,13 +73,21 @@ html {
   font-family: $font-family-body;
 }
 
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .navbar-brand,
 .nav-link {
   font-family: $font-family-heading;
 }
 
-code, pre, kbd, samp,
+code,
+pre,
+kbd,
+samp,
 .post-meta,
 .post-tags,
 .more-info {
@@ -104,11 +128,7 @@ body {
 In `assets/css/main.scss`, add the import after "variables":
 
 ```scss
-@import
-  "variables",
-  "typography",
-  "themes",
-  // ... rest of imports
+@import "variables", "typography", "themes"; // ... rest of imports
 ```
 
 **Step 5: Verify fonts load**
@@ -129,6 +149,7 @@ git commit -m "feat: add Space Grotesk + Satoshi typography system"
 ## Task 2: Update Professional Mode Color Variables
 
 **Files:**
+
 - Modify: `_sass/_variables.scss` (color definitions)
 - Modify: `_sass/_themes.scss` (CSS custom properties)
 
@@ -138,8 +159,8 @@ In `_sass/_variables.scss`, update/add these colors after existing color definit
 
 ```scss
 // Professional Mode Colors (Warm Beige + Rust)
-$pro-bg-primary: #FAF9F7;
-$pro-bg-surface: #FFFFFF;
+$pro-bg-primary: #faf9f7;
+$pro-bg-surface: #ffffff;
 $pro-text-primary: #2d2d2d;
 $pro-text-secondary: #6b6b6b;
 $pro-accent: #c75b39;
@@ -183,6 +204,7 @@ In `_sass/_themes.scss`, update the `:root` block to use new professional colors
 **Step 3: Verify color changes**
 
 Refresh browser, confirm:
+
 - Background is warm beige (#FAF9F7)
 - Accent color is rust (#c75b39)
 - Text is near-black (#2d2d2d)
@@ -199,6 +221,7 @@ git commit -m "feat: update to warm beige + rust professional palette"
 ## Task 3: Add Personal Mode CSS Rules
 
 **Files:**
+
 - Modify: `_sass/_themes.scss` (add persona styles)
 
 **Step 1: Add persona attribute styles**
@@ -227,12 +250,7 @@ html[data-persona="personal"] {
 
   // Gradient accent for links
   a:not(.nav-link):not(.navbar-brand) {
-    background: linear-gradient(
-      90deg,
-      #{$personal-gradient-start},
-      #{$personal-gradient-mid},
-      #{$personal-gradient-end}
-    );
+    background: linear-gradient(90deg, #{$personal-gradient-start}, #{$personal-gradient-mid}, #{$personal-gradient-end});
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -243,12 +261,9 @@ html[data-persona="personal"] {
   }
 
   // Gradient text for headings
-  h1, h2 {
-    background: linear-gradient(
-      90deg,
-      #{$personal-gradient-start},
-      #{$personal-gradient-mid}
-    );
+  h1,
+  h2 {
+    background: linear-gradient(90deg, #{$personal-gradient-start}, #{$personal-gradient-mid});
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -274,10 +289,11 @@ html[data-persona="personal"] {
 // Smooth transition between personas
 html.persona-transition,
 html.persona-transition * {
-  transition: background-color 0.6s ease-in-out,
-              color 0.6s ease-in-out,
-              border-color 0.6s ease-in-out,
-              box-shadow 0.6s ease-in-out !important;
+  transition:
+    background-color 0.6s ease-in-out,
+    color 0.6s ease-in-out,
+    border-color 0.6s ease-in-out,
+    box-shadow 0.6s ease-in-out !important;
 }
 ```
 
@@ -286,6 +302,7 @@ html.persona-transition * {
 Open browser DevTools → Elements → find `<html>` → add attribute `data-persona="personal"`
 
 Verify:
+
 - Background turns dark twilight (#1a1a2e)
 - Text turns cream (#e8e4df)
 - Headings have gradient text
@@ -303,6 +320,7 @@ git commit -m "feat: add personal mode CSS with city-pop gradients and glow effe
 ## Task 4: Create Profile Photo Easter Egg JavaScript
 
 **Files:**
+
 - Create: `assets/js/persona.js`
 - Modify: `_includes/head.liquid` (add script)
 
@@ -316,9 +334,9 @@ Create `assets/js/persona.js`:
  * Trigger: Click profile photo 3 times
  */
 
-(function() {
-  const STORAGE_KEY = 'persona';
-  const STORAGE_TIMESTAMP_KEY = 'persona_timestamp';
+(function () {
+  const STORAGE_KEY = "persona";
+  const STORAGE_TIMESTAMP_KEY = "persona_timestamp";
   const EXPIRY_HOURS = 24;
   const CLICK_THRESHOLD = 3;
   const CLICK_TIMEOUT = 2000; // Reset click count after 2s of inactivity
@@ -338,18 +356,18 @@ Create `assets/js/persona.js`:
   function getPersona() {
     // URL param override for sharing formal links
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('professional')) {
-      return 'professional';
+    if (urlParams.has("professional")) {
+      return "professional";
     }
 
     // Check expiry
     if (isPersonaExpired()) {
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(STORAGE_TIMESTAMP_KEY);
-      return 'professional';
+      return "professional";
     }
 
-    return localStorage.getItem(STORAGE_KEY) || 'professional';
+    return localStorage.getItem(STORAGE_KEY) || "professional";
   }
 
   // Set persona with timestamp
@@ -364,36 +382,33 @@ Create `assets/js/persona.js`:
     const html = document.documentElement;
 
     // Add transition class
-    html.classList.add('persona-transition');
+    html.classList.add("persona-transition");
 
     // Set persona attribute
-    html.setAttribute('data-persona', persona);
+    html.setAttribute("data-persona", persona);
 
     // Show toast notification
-    showToast(persona === 'personal'
-      ? 'Welcome to the other side'
-      : 'Back to business'
-    );
+    showToast(persona === "personal" ? "Welcome to the other side" : "Back to business");
 
     // Remove transition class after animation
     setTimeout(() => {
-      html.classList.remove('persona-transition');
+      html.classList.remove("persona-transition");
     }, 600);
 
     // Toggle personal-only content visibility
-    document.querySelectorAll('.personal-only').forEach(el => {
-      el.style.display = persona === 'personal' ? '' : 'none';
+    document.querySelectorAll(".personal-only").forEach((el) => {
+      el.style.display = persona === "personal" ? "" : "none";
     });
   }
 
   // Show toast notification
   function showToast(message) {
     // Remove existing toast
-    const existing = document.querySelector('.persona-toast');
+    const existing = document.querySelector(".persona-toast");
     if (existing) existing.remove();
 
-    const toast = document.createElement('div');
-    toast.className = 'persona-toast';
+    const toast = document.createElement("div");
+    toast.className = "persona-toast";
     toast.textContent = message;
     toast.style.cssText = `
       position: fixed;
@@ -416,28 +431,28 @@ Create `assets/js/persona.js`:
 
     // Fade in
     requestAnimationFrame(() => {
-      toast.style.opacity = '1';
+      toast.style.opacity = "1";
     });
 
     // Fade out and remove
     setTimeout(() => {
-      toast.style.opacity = '0';
+      toast.style.opacity = "0";
       setTimeout(() => toast.remove(), 300);
     }, 2000);
   }
 
   // Add visual hint to profile photo
   function addGlowHint(photo, intensity) {
-    const colors = ['#f4a261', '#e076a0', '#9d8cff'];
+    const colors = ["#f4a261", "#e076a0", "#9d8cff"];
     const color = colors[Math.min(intensity - 1, 2)];
-    const blur = 5 + (intensity * 5);
+    const blur = 5 + intensity * 5;
     photo.style.boxShadow = `0 0 ${blur}px ${color}`;
-    photo.style.transition = 'box-shadow 0.3s ease';
+    photo.style.transition = "box-shadow 0.3s ease";
   }
 
   // Reset photo glow
   function resetGlow(photo) {
-    photo.style.boxShadow = '';
+    photo.style.boxShadow = "";
   }
 
   // Handle profile photo click
@@ -455,7 +470,7 @@ Create `assets/js/persona.js`:
     if (clickCount >= CLICK_THRESHOLD) {
       // Toggle persona
       const currentPersona = getPersona();
-      const newPersona = currentPersona === 'professional' ? 'personal' : 'professional';
+      const newPersona = currentPersona === "professional" ? "personal" : "professional";
       setPersona(newPersona);
 
       // Reset
@@ -474,14 +489,14 @@ Create `assets/js/persona.js`:
   function init() {
     // Apply saved persona immediately (before DOM ready to prevent flash)
     const persona = getPersona();
-    document.documentElement.setAttribute('data-persona', persona);
+    document.documentElement.setAttribute("data-persona", persona);
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener("DOMContentLoaded", () => {
       // Find profile photo
-      const profilePhoto = document.querySelector('.profile img');
+      const profilePhoto = document.querySelector(".profile img");
       if (profilePhoto) {
-        profilePhoto.style.cursor = 'pointer';
-        profilePhoto.addEventListener('click', handlePhotoClick);
+        profilePhoto.style.cursor = "pointer";
+        profilePhoto.addEventListener("click", handlePhotoClick);
       }
 
       // Apply persona (for content visibility)
@@ -523,6 +538,7 @@ git commit -m "feat: add Easter egg persona toggle (click profile 3x)"
 ## Task 5: Create Personal Mode Data File
 
 **Files:**
+
 - Create: `_data/personal.yml`
 
 **Step 1: Create personal data file**
@@ -573,6 +589,7 @@ git commit -m "feat: add personal mode data (Dota heroes, currently)"
 ## Task 6: Create Hero Pool Component
 
 **Files:**
+
 - Create: `_includes/hero-pool.liquid`
 - Create: `_sass/_components.scss`
 - Modify: `assets/css/main.scss` (add import)
@@ -583,25 +600,25 @@ Create `_includes/hero-pool.liquid`:
 
 ```liquid
 {% if site.data.personal.heroes %}
-<div class="hero-pool personal-only" style="display: none;">
-  <h3 class="hero-pool-title">Hero Pool</h3>
-  <div class="hero-pool-grid">
-    {% for hero in site.data.personal.heroes %}
-    <div class="hero-card" title="{{ hero.name }} - {{ hero.role }}">
-      <img
-        src="{{ hero.image }}"
-        alt="{{ hero.name }}"
-        class="hero-portrait"
-        loading="lazy"
-      >
-      <span class="hero-name">{{ hero.name }}</span>
-      {% if hero.role == "Main" %}
-      <span class="hero-main-badge">Main</span>
-      {% endif %}
+  <div class="hero-pool personal-only" style="display: none;">
+    <h3 class="hero-pool-title">Hero Pool</h3>
+    <div class="hero-pool-grid">
+      {% for hero in site.data.personal.heroes %}
+        <div class="hero-card" title="{{ hero.name }} - {{ hero.role }}">
+          <img
+            src="{{ hero.image }}"
+            alt="{{ hero.name }}"
+            class="hero-portrait"
+            loading="lazy"
+          >
+          <span class="hero-name">{{ hero.name }}</span>
+          {% if hero.role == 'Main' %}
+            <span class="hero-main-badge">Main</span>
+          {% endif %}
+        </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
-</div>
 {% endif %}
 ```
 
@@ -643,7 +660,9 @@ Create `_sass/_components.scss`:
   padding: 0.75rem;
   border-radius: 8px;
   background: var(--global-bg-color);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   cursor: default;
   position: relative;
 
@@ -666,8 +685,9 @@ html[data-persona="personal"] .hero-card:hover {
 
 html[data-persona="personal"] .hero-portrait {
   border-color: transparent;
-  background: linear-gradient(var(--global-card-bg-color), var(--global-card-bg-color)) padding-box,
-              linear-gradient(135deg, $personal-gradient-start, $personal-gradient-mid, $personal-gradient-end) border-box;
+  background:
+    linear-gradient(var(--global-card-bg-color), var(--global-card-bg-color)) padding-box,
+    linear-gradient(135deg, $personal-gradient-start, $personal-gradient-mid, $personal-gradient-end) border-box;
   border: 2px solid transparent;
 }
 
@@ -725,13 +745,7 @@ html[data-persona="personal"] .currently-widget {
 In `assets/css/main.scss`, add the import:
 
 ```scss
-@import
-  "variables",
-  "typography",
-  "themes",
-  "components",
-  "layout",
-  // ... rest
+@import "variables", "typography", "themes", "components", "layout"; // ... rest
 ```
 
 **Step 4: Commit**
@@ -746,6 +760,7 @@ git commit -m "feat: add hero pool component for personal mode"
 ## Task 7: Create Currently Widget Component
 
 **Files:**
+
 - Create: `_includes/currently.liquid`
 
 **Step 1: Create currently widget**
@@ -754,27 +769,30 @@ Create `_includes/currently.liquid`:
 
 ```liquid
 {% if site.data.personal.currently %}
-<div class="currently-widget personal-only" style="display: none;">
-  <div class="currently-title">Currently</div>
-  {% if site.data.personal.currently.playing %}
-  <div class="currently-item">
-    <span class="label">Playing:</span>
-    <span class="value">{{ site.data.personal.currently.playing }}{% if site.data.personal.currently.rank %} ({{ site.data.personal.currently.rank }}){% endif %}</span>
+  <div class="currently-widget personal-only" style="display: none;">
+    <div class="currently-title">Currently</div>
+    {% if site.data.personal.currently.playing %}
+      <div class="currently-item">
+        <span class="label">Playing:</span>
+        <span class="value">
+          {{- site.data.personal.currently.playing -}}
+          {%- if site.data.personal.currently.rank %} ({{ site.data.personal.currently.rank }}){% endif -%}
+        </span>
+      </div>
+    {% endif %}
+    {% if site.data.personal.currently.reading %}
+      <div class="currently-item">
+        <span class="label">Reading:</span>
+        <span class="value">{{ site.data.personal.currently.reading }}</span>
+      </div>
+    {% endif %}
+    {% if site.data.personal.currently.watching %}
+      <div class="currently-item">
+        <span class="label">Watching:</span>
+        <span class="value">{{ site.data.personal.currently.watching }}</span>
+      </div>
+    {% endif %}
   </div>
-  {% endif %}
-  {% if site.data.personal.currently.reading %}
-  <div class="currently-item">
-    <span class="label">Reading:</span>
-    <span class="value">{{ site.data.personal.currently.reading }}</span>
-  </div>
-  {% endif %}
-  {% if site.data.personal.currently.watching %}
-  <div class="currently-item">
-    <span class="label">Watching:</span>
-    <span class="value">{{ site.data.personal.currently.watching }}</span>
-  </div>
-  {% endif %}
-</div>
 {% endif %}
 ```
 
@@ -790,6 +808,7 @@ git commit -m "feat: add currently widget for personal mode"
 ## Task 8: Integrate Personal Components into About Layout
 
 **Files:**
+
 - Modify: `_layouts/about.liquid`
 
 **Step 1: Add personal components to about layout**
@@ -834,6 +853,7 @@ git commit -m "feat: integrate personal mode components into about layout"
 ## Task 9: Add Profile Photo Animated Border for Personal Mode
 
 **Files:**
+
 - Modify: `_sass/_base.scss` (profile styles)
 
 **Step 1: Add animated gradient border**
@@ -848,25 +868,26 @@ html[data-persona="personal"] {
       border: 3px solid transparent;
       background:
         linear-gradient(var(--global-card-bg-color), var(--global-card-bg-color)) padding-box,
-        linear-gradient(
-          135deg,
-          $personal-gradient-start,
-          $personal-gradient-mid,
-          $personal-gradient-end,
-          $personal-gradient-start
-        ) border-box;
-      background-size: 100% 100%, 300% 300%;
+        linear-gradient(135deg, $personal-gradient-start, $personal-gradient-mid, $personal-gradient-end, $personal-gradient-start) border-box;
+      background-size:
+        100% 100%,
+        300% 300%;
       animation: gradient-rotate 4s ease infinite;
     }
   }
 }
 
 @keyframes gradient-rotate {
-  0%, 100% {
-    background-position: 0% 0%, 0% 50%;
+  0%,
+  100% {
+    background-position:
+      0% 0%,
+      0% 50%;
   }
   50% {
-    background-position: 0% 0%, 100% 50%;
+    background-position:
+      0% 0%,
+      100% 50%;
   }
 }
 ```
@@ -888,12 +909,14 @@ git commit -m "feat: add animated gradient border to profile photo in personal m
 ## Task 10: Polish and Accessibility Review
 
 **Files:**
+
 - Modify: `_sass/_themes.scss` (ensure contrast)
 - Modify: `assets/js/persona.js` (keyboard support)
 
 **Step 1: Verify color contrast in personal mode**
 
 Check contrast ratios:
+
 - Text (#e8e4df) on background (#1a1a2e): ~11:1 ✓
 - Secondary text (#9d99b3) on background (#1a1a2e): ~6:1 ✓
 
@@ -904,13 +927,13 @@ In `assets/js/persona.js`, update the init function to add keyboard support:
 ```javascript
 // In the DOMContentLoaded callback, after finding profilePhoto:
 if (profilePhoto) {
-  profilePhoto.style.cursor = 'pointer';
-  profilePhoto.setAttribute('tabindex', '0');
-  profilePhoto.setAttribute('role', 'button');
-  profilePhoto.setAttribute('aria-label', 'Click 3 times to toggle persona mode');
-  profilePhoto.addEventListener('click', handlePhotoClick);
-  profilePhoto.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+  profilePhoto.style.cursor = "pointer";
+  profilePhoto.setAttribute("tabindex", "0");
+  profilePhoto.setAttribute("role", "button");
+  profilePhoto.setAttribute("aria-label", "Click 3 times to toggle persona mode");
+  profilePhoto.addEventListener("click", handlePhotoClick);
+  profilePhoto.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handlePhotoClick(e);
     }
@@ -936,6 +959,7 @@ git commit -m "feat: polish accessibility for persona toggle"
 ## Task 11: Update Personal Data with Your Actual Heroes
 
 **Files:**
+
 - Modify: `_data/personal.yml`
 
 **Step 1: Update with real data**
@@ -972,18 +996,21 @@ git commit -m "chore: update personal mode data with actual content"
 After all tasks complete:
 
 1. **Professional Mode (default)**
+
    - [ ] Warm beige background (#FAF9F7)
    - [ ] Rust accent color (#c75b39)
    - [ ] Space Grotesk headings
    - [ ] No personal content visible
 
 2. **Easter Egg Trigger**
+
    - [ ] Click profile 1x → subtle glow
    - [ ] Click profile 2x → stronger glow
    - [ ] Click profile 3x → mode switches
    - [ ] Toast notification appears
 
 3. **Personal Mode**
+
    - [ ] Dark twilight background (#1a1a2e)
    - [ ] Gradient text on headings
    - [ ] Card glow effects
@@ -992,6 +1019,7 @@ After all tasks complete:
    - [ ] Animated profile border
 
 4. **Persistence**
+
    - [ ] Refresh maintains mode
    - [ ] ?professional param forces professional
    - [ ] Mode expires after 24 hours

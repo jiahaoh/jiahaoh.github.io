@@ -31,7 +31,9 @@
   padding: 0.75rem;
   border-radius: 8px;
   background: var(--global-bg-color);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   cursor: default;
   position: relative;
 
@@ -54,8 +56,9 @@ html[data-persona="personal"] .hero-card:hover {
 
 html[data-persona="personal"] .hero-portrait {
   border-color: transparent;
-  background: linear-gradient(var(--global-card-bg-color), var(--global-card-bg-color)) padding-box,
-              linear-gradient(135deg, $personal-gradient-start, $personal-gradient-mid, $personal-gradient-end) border-box;
+  background:
+    linear-gradient(var(--global-card-bg-color), var(--global-card-bg-color)) padding-box,
+    linear-gradient(135deg, $personal-gradient-start, $personal-gradient-mid, $personal-gradient-end) border-box;
   border: 2px solid transparent;
 }
 

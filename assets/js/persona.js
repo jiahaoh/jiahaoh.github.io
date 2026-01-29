@@ -44,9 +44,7 @@
     html.classList.add("persona-transition");
     html.setAttribute("data-persona", persona);
 
-    showToast(
-      persona === "personal" ? "Welcome to the other side" : "Back to business"
-    );
+    showToast(persona === "personal" ? "Welcome to the other side" : "Back to business");
 
     setTimeout(() => {
       html.classList.remove("persona-transition");
@@ -112,8 +110,7 @@
 
     if (clickCount >= CLICK_THRESHOLD) {
       const currentPersona = getPersona();
-      const newPersona =
-        currentPersona === "professional" ? "personal" : "professional";
+      const newPersona = currentPersona === "professional" ? "personal" : "professional";
       setPersona(newPersona);
       clickCount = 0;
       resetGlow(photo);
@@ -135,10 +132,7 @@
         profilePhoto.style.cursor = "pointer";
         profilePhoto.setAttribute("tabindex", "0");
         profilePhoto.setAttribute("role", "button");
-        profilePhoto.setAttribute(
-          "aria-label",
-          "Click 3 times to toggle persona mode"
-        );
+        profilePhoto.setAttribute("aria-label", "Click 3 times to toggle persona mode");
         profilePhoto.addEventListener("click", handlePhotoClick);
         profilePhoto.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
