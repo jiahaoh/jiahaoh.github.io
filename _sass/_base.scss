@@ -229,6 +229,35 @@ ul.task-list input[type="checkbox"] {
   }
 }
 
+// Profile photo animated border for Personal Mode
+html[data-persona="personal"] {
+  .profile {
+    img {
+      border: 3px solid transparent;
+      background:
+        linear-gradient(var(--global-card-bg-color), var(--global-card-bg-color)) padding-box,
+        linear-gradient(
+          135deg,
+          $personal-gradient-start,
+          $personal-gradient-mid,
+          $personal-gradient-end,
+          $personal-gradient-start
+        ) border-box;
+      background-size: 100% 100%, 300% 300%;
+      animation: gradient-rotate 4s ease infinite;
+    }
+  }
+}
+
+@keyframes gradient-rotate {
+  0%, 100% {
+    background-position: 0% 0%, 0% 50%;
+  }
+  50% {
+    background-position: 0% 0%, 100% 50%;
+  }
+}
+
 .post-description {
   margin-bottom: 2rem;
   font-size: 0.875rem;
@@ -291,6 +320,10 @@ ul.task-list input[type="checkbox"] {
 
   .navbar-nav .nav-item .nav-link {
     color: var(--global-text-color);
+    // Ensure minimum touch target size (44x44px)
+    min-height: 44px;
+    display: flex;
+    align-items: center;
 
     &:hover {
       color: var(--global-hover-color);
@@ -313,6 +346,13 @@ ul.task-list input[type="checkbox"] {
     font-size: 1.7rem;
 
     a {
+      // Ensure minimum touch target size
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
       img {
         width: 1.7rem;
         height: 1.7rem;
@@ -391,9 +431,22 @@ ul.task-list input[type="checkbox"] {
   border: 0;
   background-color: inherit;
   color: var(--global-text-color);
+  cursor: pointer;
+  // Ensure minimum touch target size (44x44px)
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     color: var(--global-hover-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--global-theme-color);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 
@@ -1418,4 +1471,36 @@ figure.cover {
   a.cover-link:hover {
     color: #23212d !important;
   }
+}
+
+// Accessibility: Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Accessibility: Global focus-visible styles for interactive elements
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--global-theme-color);
+  outline-offset: 2px;
+}
+
+// Ensure clickable elements have pointer cursor
+.navbar-toggler,
+.btn,
+.card a,
+.nav-link,
+[role="button"] {
+  cursor: pointer;
 }
