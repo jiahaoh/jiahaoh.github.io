@@ -36,9 +36,15 @@ layout: default
           <div class="more-info">{{ page.profile.more_info }}</div>
         {% endif %}
       </div>
+
+      <!-- Personal Mode: Currently Widget -->
+      {% include currently.liquid %}
     {% endif %}
 
     <div class="clearfix">{{ content }}</div>
+
+    <!-- Personal Mode: Hero Pool -->
+    {% include hero-pool.liquid %}
 
     <!-- News -->
     {% if page.announcements and page.announcements.enabled %}
