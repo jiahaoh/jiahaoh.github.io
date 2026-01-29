@@ -1,5 +1,64 @@
 # Website Update Notes
 
+## Changes Made (2026-01-28)
+
+### Dual Persona Portfolio Feature
+
+Added an Easter egg that toggles between Professional and Personal modes by clicking the profile photo 3 times.
+
+#### Design Documents
+
+- `docs/plans/2026-01-28-dual-persona-design.md` - Design spec
+- `docs/plans/2026-01-28-dual-persona-implementation.md` - Implementation plan
+
+#### Files Added
+
+- `_sass/_typography.scss` - New typography system (Space Grotesk + Satoshi + Space Mono)
+- `_sass/_components.scss` - Hero Pool and Currently widget styles
+- `assets/js/persona.js` - Easter egg toggle logic with localStorage persistence
+- `_includes/hero-pool.liquid` - Dota hero showcase component
+- `_includes/currently.liquid` - Currently playing/reading/watching widget
+- `_data/personal.yml` - Personal mode content data (Dota heroes, interests)
+
+#### Files Modified
+
+- `_config.yml` - Updated Google Fonts URL (Space Grotesk, Space Mono)
+- `_sass/_variables.scss` - Added Professional Mode colors (warm beige #FAF9F7, rust #c75b39) and Personal Mode colors (city-pop dark palette)
+- `_sass/_themes.scss` - Added `[data-persona="personal"]` styles with gradients and glow effects
+- `_sass/_base.scss` - Added animated gradient border for profile photo, accessibility improvements (focus states, reduced motion, touch targets)
+- `assets/css/main.scss` - Added imports for typography and components
+- `_includes/head.liquid` - Added persona.js script
+- `_layouts/about.liquid` - Integrated hero-pool and currently widgets
+- `purgecss.config.js` - Added safelist to preserve persona-related CSS in production
+
+#### Features
+
+**Professional Mode (Default)**
+
+- Warm beige background (#FAF9F7)
+- Rust accent color (#c75b39)
+- Space Grotesk headings, Satoshi body text
+- Clean, academic aesthetic
+
+**Personal Mode (Easter Egg)**
+
+- Trigger: Click profile photo 3 times
+- City-pop dark theme (#1a1a2e background)
+- Gradient accents (peach → pink → lavender)
+- Hero Pool section with Dota heroes (Windranger, QoP, Slardar, Mars, Dawnbreaker)
+- Currently widget showing playing/reading/watching
+- Animated gradient border on profile photo
+- Toast notifications on mode switch
+
+**Technical Details**
+
+- 24-hour localStorage persistence
+- `?professional` URL param forces professional mode
+- Keyboard accessible (Tab + Enter on profile photo)
+- Smooth 0.6s transition between modes
+
+---
+
 ## Changes Made (2025-01-27)
 
 ### Files Added
