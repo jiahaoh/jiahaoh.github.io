@@ -133,7 +133,19 @@
       const profilePhoto = document.querySelector(".profile img");
       if (profilePhoto) {
         profilePhoto.style.cursor = "pointer";
+        profilePhoto.setAttribute("tabindex", "0");
+        profilePhoto.setAttribute("role", "button");
+        profilePhoto.setAttribute(
+          "aria-label",
+          "Click 3 times to toggle persona mode"
+        );
         profilePhoto.addEventListener("click", handlePhotoClick);
+        profilePhoto.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handlePhotoClick(e);
+          }
+        });
       }
       applyPersona(persona);
     });
