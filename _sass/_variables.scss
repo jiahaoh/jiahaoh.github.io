@@ -24,13 +24,32 @@ $pink-color: #f92080 !default;
 $pink-color-light: #ffdddd !default;
 $yellow-color: #efcc00 !default;
 
-$grey-color: #828282 !default;
+$grey-color: #595959 !default; // Darkened for WCAG AA contrast (4.5:1+)
 $grey-color-light: color.adjust($grey-color, $lightness: 40%);
 $grey-color-dark: #1c1c1d;
 $grey-900: #212529;
 
 $white-color: #ffffff !default;
 $black-color: #000000 !default;
+
+// Professional Mode Colors (Warm Beige + Rust)
+$pro-bg-primary: #FAF9F7;
+$pro-bg-surface: #FFFFFF;
+$pro-text-primary: #2d2d2d;
+$pro-text-secondary: #6b6b6b;
+$pro-accent: #c75b39;
+$pro-accent-hover: #a84a2e;
+$pro-divider: rgba(0, 0, 0, 0.08);
+
+// Personal Mode Colors (City-pop Dark)
+$personal-bg-primary: #1a1a2e;
+$personal-bg-surface: #252542;
+$personal-text-primary: #e8e4df;
+$personal-text-secondary: #9d99b3;
+$personal-gradient-start: #f4a261;
+$personal-gradient-mid: #e076a0;
+$personal-gradient-end: #9d8cff;
+$personal-divider: rgba(255, 255, 255, 0.1);
 
 // Theme colors
 

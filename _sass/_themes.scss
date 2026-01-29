@@ -6,19 +6,19 @@
 
 :root {
   color-scheme: light;
-  --global-bg-color: #{$white-color};
-  --global-code-bg-color: #f2f5f6;
-  --global-text-color: #{$black-color};
-  --global-text-color-light: #{$grey-color};
-  --global-theme-color: #031194;
-  --global-hover-color: #ebebe1;
+  --global-bg-color: #{$pro-bg-primary};
+  --global-code-bg-color: #f5f5f5;
+  --global-text-color: #{$pro-text-primary};
+  --global-text-color-light: #{$pro-text-secondary};
+  --global-theme-color: #{$pro-accent};
+  --global-hover-color: #{$pro-accent-hover};
   --global-hover-text-color: #{$white-color};
-  --global-footer-bg-color: #{$grey-color-dark};
-  --global-footer-text-color: #{$grey-color-light};
+  --global-footer-bg-color: #{$pro-text-primary};
+  --global-footer-text-color: #{$pro-bg-primary};
   --global-footer-link-color: #{$white-color};
-  --global-distill-app-color: #{$grey-color};
-  --global-divider-color: rgba(0, 0, 0, 0.1);
-  --global-card-bg-color: #{$white-color};
+  --global-distill-app-color: #{$pro-text-secondary};
+  --global-divider-color: #{$pro-divider};
+  --global-card-bg-color: #{$pro-bg-surface};
   --global-highlight-color: #{$red-color-dark};
   --global-back-to-top-bg-color: rgba(
     #{color.channel($black-color, "red", $space: rgb)},
@@ -101,18 +101,19 @@ html[data-theme="dark"] {
   --global-newsletter-bg-color: #{$grey-color-light};
   --global-newsletter-text-color: #{$grey-color-dark};
 
-  --global-tip-block: #42b983;
-  --global-tip-block-bg: #e2f5ec;
-  --global-tip-block-text: #215d42;
-  --global-tip-block-title: #359469;
-  --global-warning-block: #e7c000;
-  --global-warning-block-bg: #fff8d8;
-  --global-warning-block-text: #6b5900;
-  --global-warning-block-title: #b29400;
-  --global-danger-block: #c00;
-  --global-danger-block-bg: #ffe0e0;
-  --global-danger-block-text: #600;
-  --global-danger-block-title: #c00;
+  // Dark mode alert blocks with appropriate contrast
+  --global-tip-block: #4ade80;
+  --global-tip-block-bg: #14332a;
+  --global-tip-block-text: #a7f3d0;
+  --global-tip-block-title: #4ade80;
+  --global-warning-block: #fbbf24;
+  --global-warning-block-bg: #332b14;
+  --global-warning-block-text: #fde68a;
+  --global-warning-block-title: #fbbf24;
+  --global-danger-block: #f87171;
+  --global-danger-block-bg: #331414;
+  --global-danger-block-text: #fecaca;
+  --global-danger-block-title: #f87171;
 
   .only-light {
     display: none;
