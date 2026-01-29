@@ -1,0 +1,21 @@
+{% if site.data.personal.heroes %}
+<div class="hero-pool personal-only" style="display: none;">
+  <h3 class="hero-pool-title">Hero Pool</h3>
+  <div class="hero-pool-grid">
+    {% for hero in site.data.personal.heroes %}
+    <div class="hero-card" title="{{ hero.name }} - {{ hero.role }}">
+      <img
+        src="{{ hero.image }}"
+        alt="{{ hero.name }}"
+        class="hero-portrait"
+        loading="lazy"
+      >
+      <span class="hero-name">{{ hero.name }}</span>
+      {% if hero.role == "Main" %}
+      <span class="hero-main-badge">Main</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
