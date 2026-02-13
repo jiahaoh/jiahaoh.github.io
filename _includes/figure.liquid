@@ -15,20 +15,40 @@
     -->
     {% if site.imagemagick.enabled %}
       {% unless include.avoid_scaling %}
-        <source
-          class="responsive-img-srcset"
-          {% if ext == 'gif' or ext == 'jpeg' or ext == 'jpg' or ext == 'png' or ext == 'tiff' %}
+        {% if ext == 'gif' or ext == 'jpeg' or ext == 'jpg' or ext == 'png' or ext == 'tiff' %}
+          {% if site.imagemagick.output_formats.avif %}
+            <source
+              class="responsive-img-srcset"
+              srcset="{% for i in site.imagemagick.widths %}{{ img_path | relative_url }}-{{ i }}.avif {{ i }}w,{% endfor %}"
+              type="image/avif"
+              {% if include.sizes %}
+                sizes="{{ include.sizes }}"
+              {% else %}
+                sizes="95vw"
+              {% endif %}
+            >
+          {% endif %}
+          <source
+            class="responsive-img-srcset"
             srcset="{% for i in site.imagemagick.widths %}{{ img_path | relative_url }}-{{ i }}.webp {{ i }}w,{% endfor %}"
             type="image/webp"
-          {% else %}
+            {% if include.sizes %}
+              sizes="{{ include.sizes }}"
+            {% else %}
+              sizes="95vw"
+            {% endif %}
+          >
+        {% else %}
+          <source
+            class="responsive-img-srcset"
             srcset="{{ include.path | relative_url }}"
-          {% endif %}
-          {% if include.sizes %}
-            sizes="{{ include.sizes }}"
-          {% else %}
-            sizes="95vw"
-          {% endif %}
-        >
+            {% if include.sizes %}
+              sizes="{{ include.sizes }}"
+            {% else %}
+              sizes="95vw"
+            {% endif %}
+          >
+        {% endif %}
       {% endunless %}
     {% endif %}
     <img
