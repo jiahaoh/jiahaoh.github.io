@@ -1,13 +1,15 @@
 <!-- jQuery -->
 <script
+  defer
   src="{{ site.third_party_libraries.jquery.url.js }}"
   integrity="{{ site.third_party_libraries.jquery.integrity.js }}"
   crossorigin="anonymous"
 ></script>
 
 <!-- Bootsrap & MDB scripts -->
-<script src="{{ '/assets/js/bootstrap.bundle.min.js' | relative_url }}"></script>
+<script defer src="{{ '/assets/js/bootstrap.bundle.min.js' | relative_url }}"></script>
 <script
+  defer
   src="{{ site.third_party_libraries.mdb.url.js }}"
   integrity="{{ site.third_party_libraries.mdb.integrity.js }}"
   crossorigin="anonymous"
@@ -53,6 +55,7 @@
   <!-- Diff2HTML -->
   <!-- diff2html doesn't go well with Bootstrap Table -->
   <script
+    defer
     src="{{ site.third_party_libraries.diff2html.url.js }}"
     integrity="{{ site.third_party_libraries.diff2html.integrity.js }}"
     crossorigin="anonymous"
@@ -63,6 +66,7 @@
 {% if page.map %}
   <!-- Leaflet -->
   <script
+    defer
     src="{{ site.third_party_libraries.leaflet.url.js }}"
     integrity="{{ site.third_party_libraries.leaflet.integrity.js }}"
     crossorigin="anonymous"
@@ -84,12 +88,14 @@
 {% if page.chart and page.chart.echarts %}
   <!-- ECharts -->
   <script
+    defer
     src="{{ site.third_party_libraries.echarts.url.js.library }}"
     integrity="{{ site.third_party_libraries.echarts.integrity.js.library }}"
     crossorigin="anonymous"
   ></script>
   {% if site.enable_darkmode %}
     <script
+      defer
       src="{{ site.third_party_libraries.echarts.url.js.dark_theme }}"
       integrity="{{ site.third_party_libraries.echarts.integrity.js.dark_theme }}"
       crossorigin="anonymous"
@@ -106,6 +112,7 @@
     integrity="{{ site.third_party_libraries.plotly.integrity.js }}"
     crossorigin="anonymous"
   ></script>
+  <script defer src="{{ '/assets/js/plotly-themes.js' | relative_url | bust_file_cache }}" type="text/javascript"></script>
   <script defer src="{{ '/assets/js/plotly-setup.js' | relative_url | bust_file_cache }}" type="text/javascript"></script>
 {% endif %}
 
@@ -180,7 +187,7 @@
 {% endif %}
 
 <!-- Load Common JS -->
-<script src="{{ '/assets/js/no_defer.js' | relative_url | bust_file_cache }}"></script>
+<script defer src="{{ '/assets/js/no_defer.js' | relative_url | bust_file_cache }}"></script>
 <script defer src="{{ '/assets/js/common.js' | relative_url | bust_file_cache }}"></script>
 <script defer src="{{ '/assets/js/copy_code.js' | relative_url | bust_file_cache }}" type="text/javascript"></script>
 
