@@ -79,7 +79,14 @@
 
 {% if page.profile and page.profile.image %}
   <!-- Preload hero profile image for LCP -->
-  {% assign prof_img_path = page.profile.image | prepend: 'assets/img/' | remove: '.jpg' | remove: '.jpeg' | remove: '.png' | remove: '.tiff' | remove: '.gif' %}
+  {% assign prof_img_path = page.profile.image
+    | prepend: 'assets/img/'
+    | remove: '.jpg'
+    | remove: '.jpeg'
+    | remove: '.png'
+    | remove: '.tiff'
+    | remove: '.gif'
+  %}
   <link rel="preload" as="image" type="image/webp" href="{{ prof_img_path | relative_url }}-800.webp">
 {% endif %}
 
