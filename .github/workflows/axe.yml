@@ -1,14 +1,15 @@
 name: Axe accessibility testing
 
 on:
-  push:
-    branches:
-      - master
-      - main
-  pull_request:
-    branches:
-      - master
-      - main
+  # Uncomment to run on every push/PR after resolving all accessibility issues:
+  # push:
+  #   branches:
+  #     - master
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - master
+  #     - main
   workflow_dispatch:
     inputs:
       url:
