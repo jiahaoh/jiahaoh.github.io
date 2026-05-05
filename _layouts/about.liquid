@@ -36,15 +36,9 @@ layout: default
           <div class="more-info">{{ page.profile.more_info }}</div>
         {% endif %}
       </div>
-
-      <!-- Personal Mode: Currently Widget -->
-      {% include currently.liquid %}
     {% endif %}
 
     <div class="clearfix">{{ content }}</div>
-
-    <!-- Personal Mode: Hero Pool -->
-    {% include hero-pool.liquid %}
 
     <!-- News -->
     {% if page.announcements and page.announcements.enabled %}
@@ -60,14 +54,6 @@ layout: default
         <a href="{{ '/blog/' | relative_url }}" style="color: inherit">Latest Posts</a>
       </h2>
       {% include latest_posts.liquid %}
-    {% endif %}
-
-    <!-- Selected papers -->
-    {% if page.selected_papers %}
-      <h2>
-        <a href="{{ '/publications/' | relative_url }}" style="color: inherit">Selected Publications</a>
-      </h2>
-      {% include selected_papers.liquid %}
     {% endif %}
 
     <!-- Social -->

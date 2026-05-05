@@ -1,38 +1,57 @@
 ---
-layout: default
+layout: plain-text
 ---
-<div class="post">
-  <header class="post-header">
-    {% if page.type == 'categories' %}
-      <h1 class="post-title"><i class="fa-solid fa-tag fa-sm"></i> {{ page.title }}</h1>
-      <p class="post-description">an archive of {{ page.collection_name }} in this category</p>
-    {% elsif page.type == 'year' %}
-      <h1 class="post-title"><i class="fa-solid fa-calendar fa-sm"></i> {{ page.date | date: '%Y' }}</h1>
-      <p class="post-description">an archive of {{ page.collection_name }} from this year</p>
-    {% elsif page.type == 'tags' %}
-      <h1 class="post-title"><i class="fa-solid fa-hashtag fa-sm"></i> {{ page.title }}</h1>
-      <p class="post-description">an archive of {{ page.collection_name }} with this tag</p>
-    {% endif %}
-  </header>
+{% if page.type == 'categories' %}
+  {% assign archive_title = page.title %}
+  {% assign archive_description = 'an archive of ' | append: page.collection_name | append: ' in this category' %}
+  {% assign archive_path = 'blog/category/' | append: page.title | slugify %}
+{% elsif page.type == 'year' %}
+  {% assign archive_title = page.date | date: '%Y' %}
+  {% assign archive_description = 'an archive of ' | append: page.collection_name | append: ' from this year' %}
+  {% assign archive_path = 'blog/' | append: archive_title %}
+{% elsif page.type == 'tags' %}
+  {% assign archive_title = page.title %}
+  {% assign archive_description = 'an archive of ' | append: page.collection_name | append: ' with this tag' %}
+  {% assign archive_path = 'blog/tag/' | append: page.title | slugify %}
+{% endif %}
 
-  <article class="archive">
-    <div class="table-responsive">
-      <table class="table table-sm table-borderless">
-        {% for document in page.documents %}
-          <tr>
-            <th scope="row">{{ document.date | date: '%b %d, %Y' }}</th>
-            <td>
-              {% if document.redirect == blank %}
-                <a class="post-link" href="{{ document.url | relative_url }}">{{ document.title }}</a>
-              {% elsif document.redirect contains '://' %}
-                <a class="post-link" href="{{ document.redirect }}" target="_blank">{{ document.title }}</a>
-              {% else %}
-                <a class="post-link" href="{{ document.redirect | relative_url }}">{{ document.title }}</a>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-  </article>
-</div>
+<main class="plain-idx" role="main">
+  <div class="plain-back">
+    <a href="{{ '/blog/' | relative_url }}"><span class="arr">&larr;</span>cd ~/blog</a>
+  </div>
+
+  <div class="plain-idx-head">
+    <span class="title"><span class="sigil">$</span>ls /{{ archive_path }}</span>
+    <span class="meta">{{ page.documents | size }} entries</span>
+  </div>
+
+  <p class="plain-archive-desc">{{ archive_description }}</p>
+
+  <section class="plain-year" data-year-group>
+    <div class="plain-year-row">{{ archive_title }}</div>
+    {% for document in page.documents %}
+      {% if document.redirect == blank %}
+        {% assign document_href = document.url | relative_url %}
+        {% assign external_document = false %}
+      {% elsif document.redirect contains '://' %}
+        {% assign document_href = document.redirect %}
+        {% assign external_document = true %}
+      {% else %}
+        {% assign document_href = document.redirect | relative_url %}
+        {% assign external_document = false %}
+      {% endif %}
+
+      <a
+        class="plain-entry"
+        href="{{ document_href }}"
+        {% if external_document %}
+          target="_blank" rel="noopener noreferrer"
+        {% endif %}
+      >
+        <span class="date">{{ document.date | date: '%Y-%m-%d' }}</span>
+        <span class="title">{{ document.title }}</span>
+        <span class="tag">{{ document.collection | default: page.collection_name }}</span>
+      </a>
+    {% endfor %}
+  </section>
+</main>

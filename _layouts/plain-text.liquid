@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="{{ site.lang }}">
+  <head>
+    {% if page.redirect %}
+      {% if page.redirect == true %}
+        {% assign redirect = site.baseurl | append: '/' %}
+      {% elsif page.redirect contains '://' %}
+        {% assign redirect = page.redirect %}
+      {% else %}
+        {% assign redirect = page.redirect | relative_url %}
+      {% endif %}
+      <meta http-equiv="refresh" content="3; url={{ redirect }}">
+    {% endif %}
+    {% include head.liquid %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+    >
+  </head>
+
+  <body class="plain-text-shell {{ page.plain_body_class }} {{ layout.plain_body_class }}">
+    {{ content }}
+
+    {% include scripts.liquid %}
+    {% include plain-text-scripts.liquid %}
+  </body>
+</html>

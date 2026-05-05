@@ -1,37 +1,48 @@
 ---
-layout: default
+layout: plain-text
 ---
-{% unless site.data.resume %}
-  <div class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        {{ page.title }}
-        {% if page.cv_pdf %}
-          <a
-            {% if page.cv_pdf contains '://' %}
-              href="{{ page.cv_pdf }}"
-            {% else %}
-              href="{{ page.cv_pdf | prepend: 'assets/pdf/' | relative_url }}"
-            {% endif %}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="float-right"
-          >
-            <i class="fa-solid fa-file-pdf"></i>
-          </a>
-        {% endif %}
-      </h1>
-      {% if page.description %}
-        <p class="post-description">{{ page.description }}</p>
-      {% endif %}
-    </header>
+<main class="plain-page-wrap plain-cv-page" role="main">
+  <div class="plain-back">
+    <a href="{{ '/' | relative_url }}"><span class="arr">&larr;</span>cd ~</a>
+  </div>
 
-    <article>
-      <div class="cv">
+  <nav class="plain-crumbs" aria-label="Breadcrumb">
+    <span class="sigil">$</span>cat
+    <span class="sep">·</span>
+    <a href="{{ '/' | relative_url }}">~</a><span class="sep">/</span><span class="here">cv</span>
+  </nav>
+
+  <header class="plain-page-header">
+    <h1 class="plain-page-title">
+      {{ page.title }}
+      {% if page.cv_pdf %}
+        <a
+          {% if page.cv_pdf contains '://' %}
+            href="{{ page.cv_pdf }}"
+          {% else %}
+            href="{{ page.cv_pdf | prepend: 'assets/pdf/' | relative_url }}"
+          {% endif %}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="plain-pdf-link"
+          aria-label="Open CV PDF"
+        >
+          pdf
+        </a>
+      {% endif %}
+    </h1>
+    {% if page.description %}
+      <p class="plain-page-description">{{ page.description }}</p>
+    {% endif %}
+  </header>
+
+  <article class="plain-post-body plain-page-body">
+    <div class="cv plain-cv">
+      {% if site.data.cv %}
         {% for entry in site.data.cv %}
           <a class="anchor" id="{{ entry.title }}"></a>
-          <div class="card mt-3 p-3">
-            <h3 class="card-title font-weight-medium">{{ entry.title }}</h3>
+          <section class="plain-panel">
+            <h2>{{ entry.title }}</h2>
             <div>
               {% if entry.type == 'list' %}
                 {% include cv/list.liquid %}
@@ -47,38 +58,9 @@ layout: default
                 {{ entry.contents }}
               {% endif %}
             </div>
-          </div>
+          </section>
         {% endfor %}
-      </div>
-    </article>
-  </div>
-{% else %}
-  <div class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        {{ page.title }}
-        {% if page.cv_pdf %}
-          <a
-            {% if page.cv_pdf contains '://' %}
-              href="{{ page.cv_pdf }}"
-            {% else %}
-              href="{{ page.cv_pdf | prepend: 'assets/pdf/' | relative_url }}"
-            {% endif %}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="float-right"
-          >
-            <i class="fa-solid fa-file-pdf"></i>
-          </a>
-        {% endif %}
-      </h1>
-      {% if page.description %}
-        <p class="post-description">{{ page.description }}</p>
-      {% endif %}
-    </header>
-
-    <article>
-      <div class="cv">
+      {% else %}
         {% for data in site.data.resume %}
           {% if site.jsonresume and site.jsonresume.size > 0 %}
             {% unless site.jsonresume contains data[0] %}
@@ -87,8 +69,8 @@ layout: default
           {% endif %}
           {% if data[0] == 'meta' or data[1].size == 0 %} {% continue %} {% endif %}
           <a class="anchor" id="{{ data[0] }}"></a>
-          <div class="card mt-3 p-3">
-            <h3 class="card-title font-weight-medium">{{ data[0] | capitalize }}</h3>
+          <section class="plain-panel">
+            <h2>{{ data[0] | capitalize }}</h2>
             <div>
               {% case data[0] %}
                 {% when 'basics' %}
@@ -115,13 +97,11 @@ layout: default
                   {% include resume/certificates.liquid %}
                 {% when 'references' %}
                   {% include resume/references.liquid %}
-                {% else %}
-
               {% endcase %}
             </div>
-          </div>
+          </section>
         {% endfor %}
-      </div>
-    </article>
-  </div>
-{% endunless %}
+      {% endif %}
+    </div>
+  </article>
+</main>

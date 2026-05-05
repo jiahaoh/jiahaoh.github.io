@@ -1,7 +1,8 @@
 ---
-layout: about
+layout: home
 title: about
 permalink: /
+plain_body_class: plain-home-page
 subtitle: Ph.D. Candidate in Chemical Biology @ MIT
 
 profile:

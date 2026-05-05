@@ -1,31 +1,51 @@
 ---
-layout: default
+layout: plain-text
 ---
+{% assign page_slug = page.permalink | default: page.url | remove_first: '/' | remove: '/' %}
+{% if page_slug == '' %}
+  {% assign page_slug = page.title | slugify %}
+{% endif %}
+
 {% if page._styles %}
-  <!-- Page/Post style -->
   <style type="text/css">
     {{ page._styles }}
   </style>
 {% endif %}
 
-<div class="post">
-  <header class="post-header">
-    <h1 class="post-title">{{ page.title }}</h1>
-    <p class="post-description">{{ page.description }}</p>
+<main class="plain-page-wrap" role="main">
+  <div class="plain-back">
+    <a href="{{ '/' | relative_url }}"><span class="arr">&larr;</span>cd ~</a>
+  </div>
+
+  <nav class="plain-crumbs" aria-label="Breadcrumb">
+    <span class="sigil">$</span>cat
+    <span class="sep">·</span>
+    <a href="{{ '/' | relative_url }}">~</a><span class="sep">/</span><span class="here">{{ page_slug }}</span>
+  </nav>
+
+  <header class="plain-page-header">
+    <h1 class="plain-page-title">{{ page.title }}</h1>
+    {% if page.description %}
+      <p class="plain-page-description">{{ page.description }}</p>
+    {% endif %}
   </header>
 
-  <article>
+  <article class="plain-post-body plain-page-body">
     {{ content }}
   </article>
 
   {% if page.related_publications %}
-    <h2>References</h2>
-    <div class="publications">
-      {% bibliography --cited_in_order %}
-    </div>
+    <section class="plain-post-extra">
+      <h2>References</h2>
+      <div class="publications">
+        {% bibliography --cited_in_order %}
+      </div>
+    </section>
   {% endif %}
 
   {% if site.giscus and page.giscus_comments %}
-    {% include giscus.liquid %}
+    <section class="plain-post-extra">
+      {% include giscus.liquid %}
+    </section>
   {% endif %}
-</div>
+</main>

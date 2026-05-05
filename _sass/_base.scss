@@ -229,35 +229,6 @@ ul.task-list input[type="checkbox"] {
   }
 }
 
-// Profile photo animated border for Personal Mode
-html[data-persona="personal"] {
-  .profile {
-    img {
-      border: 3px solid transparent;
-      background:
-        linear-gradient(var(--global-card-bg-color), var(--global-card-bg-color)) padding-box,
-        linear-gradient(135deg, $personal-gradient-start, $personal-gradient-mid, $personal-gradient-end, $personal-gradient-start) border-box;
-      background-size:
-        100% 100%,
-        300% 300%;
-      animation: gradient-rotate 4s ease infinite;
-    }
-  }
-}
-
-@keyframes gradient-rotate {
-  0%,
-  100% {
-    background-position:
-      0% 0%,
-      0% 50%;
-  }
-  50% {
-    background-position:
-      0% 0%,
-      100% 50%;
-  }
-}
 
 .post-description {
   margin-bottom: 2rem;

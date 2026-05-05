@@ -10,7 +10,6 @@ $max-content-width: {{ site.max_width }};
   "variables",
   "typography",
   "themes",
-  "components",
   "layout",
   "base",
   "distill",
@@ -23,5 +22,6 @@ $max-content-width: {{ site.max_width }};
   "font-awesome/regular",
   "tabler-icons/tabler-icons.scss",
   "tabler-icons/tabler-icons-filled.scss",
-  "tabler-icons/tabler-icons-outline.scss"
+  "tabler-icons/tabler-icons-outline.scss",
+  "plain-text"
 ;

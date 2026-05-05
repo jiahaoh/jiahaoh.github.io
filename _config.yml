@@ -9,7 +9,7 @@ last_name: Huang
 contact_note: >
   Feel free to reach out via any of the platforms below.
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
-  Personal blog and portfolio of Jiahao H. Sharing thoughts, projects, and academic work.
+  Personal blog of Jiahao H. Working notes on AI for science, spatial biology, and research craft.
 footer_text: >
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
   Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
@@ -88,7 +88,7 @@ bing_site_verification: # out your bing-site-verification ID (Bing Webmaster)
 # -----------------------------------------------------------------------------
 
 blog_name: Jiahao's Blog # blog_name will be displayed in your blog page
-blog_description: Personal thoughts, projects, and academic journey
+blog_description: Working notes, essays, and research-adjacent thoughts
 permalink: /blog/:year/:title/
 lsi: false # produce an index for related posts
 
@@ -141,7 +141,7 @@ newsletter:
 
 collections:
   projects:
-    output: true
+    output: false
 
 # -----------------------------------------------------------------------------
 # Jekyll settings
