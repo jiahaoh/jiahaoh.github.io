@@ -16,13 +16,6 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/blog/";
           },
-        },{id: "nav-project",
-          title: "project",
-          description: "A growing collection of your cool projects.",
-          section: "Navigation",
-          handler: () => {
-            window.location.href = "/projects/";
-          },
         },{id: "post-welcome-to-my-blog",
         
           title: "Welcome to My Blog",
@@ -34,12 +27,7 @@ ninja.data = [{
             window.location.href = "/blog/2025/welcome/";
           
         },
-      },{id: "projects-projects-coming-soon",
-          title: 'Projects Coming Soon',
-          description: "More projects will be added here.",
-          section: "Projects",handler: () => {
-              window.location.href = "/projects/1_placeholder/";
-            },},{
+      },{
         id: 'social-email',
         title: 'email',
         section: 'Socials',
