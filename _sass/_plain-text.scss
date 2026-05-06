@@ -72,8 +72,8 @@ body.plain-text-shell button {
 
 .plain-home .wrap {
   width: 100%;
-  max-width: 980px;
-  padding: 72px 44px;
+  max-width: 1080px;
+  padding: 80px 48px;
 }
 
 .terminal {
@@ -84,28 +84,28 @@ body.plain-text-shell button {
 }
 
 .terminal .titlebar {
-  padding: 12px 18px;
+  padding: 14px 22px;
   border-bottom: 1px solid var(--plain-rule-soft);
   color: var(--plain-ink-mute);
   font-family: var(--plain-mono);
-  font-size: 13px;
+  font-size: 13.5px;
 }
 
 .terminal .screen {
-  min-height: 390px;
-  padding: 36px 36px 30px;
+  min-height: 460px;
+  padding: 48px 48px 40px;
   font-family: var(--plain-mono);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.75;
 }
 
 .terminal .bio {
-  max-width: 680px;
-  margin: 0 0 32px;
+  max-width: 760px;
+  margin: 0 0 38px;
   color: var(--plain-ink);
   font-family: var(--plain-serif);
-  font-size: 24px;
-  line-height: 1.5;
+  font-size: 27px;
+  line-height: 1.48;
 }
 
 .terminal .bio em {
@@ -117,7 +117,7 @@ body.plain-text-shell button {
   display: flex;
   gap: 12px;
   align-items: center;
-  padding: 12px 0;
+  padding: 14px 0;
   border-top: 1px solid var(--plain-rule-soft);
   border-bottom: 1px solid var(--plain-rule-soft);
 }
@@ -148,11 +148,11 @@ body.plain-text-shell button {
 
 .sg-row {
   display: grid;
-  grid-template-columns: 24px 128px minmax(0, 1fr);
+  grid-template-columns: 26px 142px minmax(0, 1fr);
   gap: 16px;
   align-items: baseline;
-  min-height: 46px;
-  padding: 9px 8px;
+  min-height: 50px;
+  padding: 10px 10px;
   border: 0;
   border-radius: 3px;
   color: inherit;
@@ -1003,6 +1003,11 @@ body.plain-text-shell button {
     padding: 36px 20px 84px;
   }
 
+  .terminal .titlebar {
+    padding: 12px 18px;
+    font-size: 13px;
+  }
+
   .terminal .screen {
     min-height: 320px;
     padding: 28px 22px 22px;
@@ -1012,6 +1017,10 @@ body.plain-text-shell button {
   .terminal .bio {
     margin-bottom: 24px;
     font-size: 20px;
+  }
+
+  .promptline {
+    padding: 12px 0;
   }
 
   .plain-idx-head {
@@ -1047,6 +1056,7 @@ body.plain-text-shell button {
     grid-template-columns: 18px minmax(78px, auto);
     gap: 8px 12px;
     min-height: 44px;
+    padding: 9px 8px;
   }
 
   .sg-row .desc {
