@@ -4,6 +4,11 @@ render_with_liquid: false
 
 # Dual Persona Portfolio Implementation Plan
 
+> Status: superseded as of 2026-05-06. The files and routes described below were
+> removed or replaced by the plain-text, blog-first redesign in commit `3a21ee6`
+> (`Redesign site around blog`). Do not follow this plan unless Jiahao explicitly
+> asks to revive the dual-persona experiment.
+
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** Transform the al-folio portfolio into a dual-identity site with Professional Mode (default) and Personal Mode (Easter egg triggered by clicking profile photo 3 times).

@@ -1,6 +1,40 @@
 # Website Optimization Plan
 
+> Status updated 2026-05-06 after the plain-text blog redesign and CI cleanup.
+> This document is now a mixed historical plan and remaining-work tracker.
+
+## Current Implementation Status
+
+### Completed or Mostly Completed
+
+| Area                     | Current state                                                                                                                                                                                  |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Critical JS deferral     | jQuery, Bootstrap, MDB, common scripts, copy-code, chart libraries, and most feature-specific scripts now load with `defer` where practical.                                                   |
+| Profile image LCP        | `_layouts/about.liquid` requests the profile image with `loading="eager"` and `fetchpriority="high"`; `_includes/head.liquid` preloads an 800px WebP variant when `page.profile.image` is set. |
+| OpenGraph and Schema.org | `_config.yml` enables `serve_og_meta`, `serve_schema_org`, and a site-wide `og_image`.                                                                                                         |
+| Responsive image formats | `jekyll-imagemagick` now emits both AVIF and WebP variants for configured image widths.                                                                                                        |
+| Source map exclusion     | `_config.yml` excludes `**/*.js.map` and `**/*.css.map` from production output.                                                                                                                |
+| Resource hints           | `_includes/head.liquid` preconnects/prefetches CDN and Google Fonts origins.                                                                                                                   |
+| Plotly theme split       | Plotly theme configuration moved to `assets/js/plotly-themes.js` and loads only for Plotly pages.                                                                                              |
+| CI simplification        | Active workflows are now `deploy.yml`, `prettier.yml`, `axe.yml`, and `broken-links-site.yml`; older noisy al-folio workflows were removed.                                                    |
+| Accessibility CI trigger | `axe.yml` runs on pushes, PRs, and manual dispatch.                                                                                                                                            |
+| Dependency caching       | `deploy.yml` uses Bundler caching via `ruby/setup-ruby` and npm caching via `actions/cache`.                                                                                                   |
+
+### Still Worth Doing
+
+| Area                        | Remaining work                                                                                                                            |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Profile source asset        | `assets/img/prof_pic.png` is still the large source image; responsive variants help delivery, but the source file can still be optimized. |
+| Search infrastructure       | Ninja-keys search still loads globally when `search_enabled: true`; lazy loading search on first interaction remains a good follow-up.    |
+| Icon payload                | Font Awesome, Scholar Icons, Academicons, and Tabler assets still coexist. Auditing actual usage could reduce payload.                    |
+| Image dimensions            | The shared figure include provides responsive sources, but broad real `width`/`height` metadata is not fully solved.                      |
+| PurgeCSS audit              | The safelist has not been deeply re-audited after the plain-text redesign.                                                                |
+| Search console verification | Google/Bing verification fields remain empty until the site is registered.                                                                |
+
 ## Current State Summary
+
+The section below is the original baseline from the optimization plan. Consult
+the status table above first when deciding what is still actionable.
 
 The site is built on the **al-folio** Jekyll theme with solid foundations: PurgeCSS, WebP
 image generation, lazy loading, deferred scripts for feature-specific libraries, and

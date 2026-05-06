@@ -2,6 +2,12 @@
 
 > A design plan for transforming jiahaoh.info into a distinctive academic portfolio with a hidden Easter egg mode.
 
+> Status: superseded as of 2026-05-06. The dual-persona Easter egg direction was
+> removed when the site moved to the plain-text, blog-first redesign in commit
+> `3a21ee6` (`Redesign site around blog`). Treat this as historical design
+> context only, not an active implementation target, unless Jiahao explicitly
+> asks to revive it.
+
 ## Concept: "Dual Identity Portfolio"
 
 The site has two modes, discoverable via an Easter egg (clicking profile photo 3 times):
