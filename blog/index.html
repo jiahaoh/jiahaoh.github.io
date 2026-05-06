@@ -23,10 +23,13 @@
     const input = document.getElementById('plain-prompt');
     const suggest = document.getElementById('plain-suggest');
     const history = document.getElementById('plain-history');
+    const bioController = initPlainBioTyper();
+    initPlainCommandPalette();
 
     if (input && suggest && history) {
       const commands = [
         { cmd: 'blog', desc: 'Notes, essays, and working drafts.', href: "/blog/" },
+        { cmd: 'about', desc: 'Type a short introduction here.', href: null, action: 'about' },
         { cmd: 'help', desc: 'Show all available commands.', href: null },
       ];
       const aliases = { writing: 'blog' };
@@ -60,6 +63,13 @@
 
         if (hit && hit.href) {
           window.location.href = hit.href;
+          return;
+        }
+
+        if (hit && hit.action === 'about') {
+          if (bioController) bioController.typeAbout();
+          input.value = '';
+          renderPrompt();
           return;
         }
 
@@ -108,17 +118,238 @@
       renderPrompt();
     }
 
+    function initPlainBioTyper() {
+      const typer = document.querySelector('[data-plain-bio-typer]');
+      if (!typer) return null;
+
+      const text = typer.querySelector('.bio-typer-text');
+      let phrases = [];
+
+      try {
+        phrases = JSON.parse(typer.dataset.phrases || '[]').filter(Boolean);
+      } catch (error) {
+        phrases = [];
+      }
+
+      if (!text || phrases.length === 0) return null;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      text.textContent = phrases[0];
+      if (reducedMotion) {
+        return {
+          typeAbout() {
+            text.textContent = typer.dataset.about || phrases[0];
+          },
+        };
+      }
+
+      let index = 0;
+      let charIndex = phrases[index].length;
+      let deleting = false;
+      let timer = null;
+      const hiddenDelay = 800;
+      const holdDelay = 2600;
+      const nextPhraseDelay = 420;
+      const deleteDelay = 42;
+      const typeDelay = 78;
+
+      const schedule = (callback, delay) => {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(callback, delay);
+      };
+
+      const tickCycle = () => {
+        if (document.hidden) {
+          schedule(tickCycle, hiddenDelay);
+          return;
+        }
+
+        const phrase = phrases[index];
+        text.textContent = phrase.slice(0, charIndex);
+
+        if (!deleting && charIndex === phrase.length) {
+          deleting = true;
+          schedule(tickCycle, holdDelay);
+          return;
+        }
+
+        if (deleting && charIndex === 0) {
+          deleting = false;
+          index = (index + 1) % phrases.length;
+          schedule(tickCycle, nextPhraseDelay);
+          return;
+        }
+
+        charIndex += deleting ? -1 : 1;
+        schedule(tickCycle, deleting ? deleteDelay : typeDelay);
+      };
+
+      const typePhrase = (phrase) => {
+        if (!phrase) return;
+
+        window.clearTimeout(timer);
+        text.textContent = '';
+        let nextIndex = 0;
+
+        const tickCustom = () => {
+          if (document.hidden) {
+            schedule(tickCustom, hiddenDelay);
+            return;
+          }
+
+          nextIndex += 1;
+          text.textContent = phrase.slice(0, nextIndex);
+
+          if (nextIndex < phrase.length) {
+            schedule(tickCustom, typeDelay);
+          }
+        };
+
+        tickCustom();
+      };
+
+      schedule(tickCycle, holdDelay);
+
+      return {
+        typeAbout() {
+          typePhrase(typer.dataset.about || phrases[0]);
+        },
+      };
+    }
+
+    function initPlainCommandPalette() {
+      if (document.querySelector('.plain-home')) return;
+
+      const commands = [
+        { cmd: 'cd ..', desc: 'Go back one page.', action: 'back' },
+        { cmd: 'cd ~', desc: 'Return to the landing page.', href: "/" },
+        { cmd: 'blog', desc: 'Open the writing index.', href: "/blog/" },
+      ];
+      const blogUrl = "/blog/";
+
+      const palette = document.createElement('div');
+      palette.className = 'plain-command-palette';
+      palette.hidden = true;
+      palette.innerHTML = `
+        <div class="plain-command-backdrop" data-command-close></div>
+        <div class="plain-command-panel" role="dialog" aria-modal="true" aria-label="command">
+          <label class="plain-command-line">
+            <span class="sigil">$</span>
+            <input id="plain-command-input" type="text" autocomplete="off" spellcheck="false" aria-label="command">
+          </label>
+        </div>
+      `;
+      document.body.append(palette);
+
+      const commandInput = palette.querySelector('#plain-command-input');
+
+      function isTypingTarget(element) {
+        if (!element) return false;
+        const tagName = element.tagName;
+        return element.isContentEditable || tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT';
+      }
+
+      function openPalette(seed) {
+        palette.hidden = false;
+        document.body.classList.add('plain-command-open');
+        commandInput.value = seed || '';
+        commandInput.focus();
+      }
+
+      function closePalette() {
+        palette.hidden = true;
+        document.body.classList.remove('plain-command-open');
+      }
+
+      function parentPath() {
+        const path = window.location.pathname.replace(/\/$/, '');
+        const parent = path.split('/').slice(0, -1).join('/') || '/';
+        return parent.endsWith('/') ? parent : `${parent}/`;
+      }
+
+      function hasSameOriginReferrer() {
+        if (!document.referrer) return false;
+
+        try {
+          return new URL(document.referrer).origin === window.location.origin;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function runPaletteCommand(command) {
+        const raw = (command || '').trim().toLowerCase().replace(/^\//, '');
+        const hit = commands.find((item) => item.cmd === raw);
+        const findMatch = raw.match(/^find(?:\s+(.+))?$/);
+        if (!hit && !findMatch) return;
+
+        closePalette();
+
+        if (findMatch) {
+          const query = (findMatch[1] || '').trim();
+          if (document.body.classList.contains('plain-writing-page')) {
+            window.dispatchEvent(new CustomEvent('plain-writing-find', { detail: { query } }));
+          } else {
+            window.location.href = `${blogUrl}?find=${encodeURIComponent(query)}`;
+          }
+          return;
+        }
+
+        if (hit.action === 'back') {
+          if (window.history.length > 1 && hasSameOriginReferrer()) {
+            window.history.back();
+          } else {
+            window.location.href = parentPath();
+          }
+          return;
+        }
+
+        if (hit.href) window.location.href = hit.href;
+      }
+
+      document.addEventListener('keydown', (event) => {
+        if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
+
+        if (palette.hidden && event.key === '/' && !isTypingTarget(document.activeElement)) {
+          event.preventDefault();
+          openPalette();
+          return;
+        }
+
+        if (palette.hidden) return;
+
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          closePalette();
+        }
+
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          runPaletteCommand(commandInput.value);
+        }
+      });
+
+      palette.addEventListener('click', (event) => {
+        if (event.target.closest('[data-command-close]')) closePalette();
+      });
+    }
+
     const filters = document.getElementById('plain-writing-filters');
     if (filters) {
       const buttons = Array.from(filters.querySelectorAll('.plain-filter'));
       const sections = Array.from(document.querySelectorAll('[data-year-group]'));
       const empty = document.getElementById('plain-writing-empty');
+      const filterState = {
+        tag: 'all',
+        title: new URLSearchParams(window.location.search).get('find') || '',
+      };
 
-      function applyFilter(tag) {
+      function applyFilter() {
         let anyVisible = false;
+        const titleQuery = filterState.title.trim().toLowerCase();
 
         buttons.forEach((button) => {
-          const isActive = button.dataset.tag === tag;
+          const isActive = button.dataset.tag === filterState.tag;
           button.classList.toggle('on', isActive);
           button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
@@ -128,7 +359,11 @@
 
           section.querySelectorAll('.plain-entry').forEach((entry) => {
             const tags = (entry.dataset.tags || '').split(/\s+/).filter(Boolean);
-            const show = tag === 'all' || tags.includes(tag);
+            const titleNode = entry.querySelector('.title');
+            const title = titleNode ? titleNode.textContent.trim().toLowerCase() : '';
+            const tagMatch = filterState.tag === 'all' || tags.includes(filterState.tag);
+            const titleMatch = !titleQuery || title.includes(titleQuery);
+            const show = tagMatch && titleMatch;
             entry.hidden = !show;
             sectionVisible = sectionVisible || show;
           });
@@ -143,8 +378,17 @@
       filters.addEventListener('click', (event) => {
         const button = event.target.closest('.plain-filter');
         if (!button) return;
-        applyFilter(button.dataset.tag);
+        filterState.tag = button.dataset.tag;
+        applyFilter();
       });
+
+      window.addEventListener('plain-writing-find', (event) => {
+        filterState.tag = 'all';
+        filterState.title = event.detail && event.detail.query ? event.detail.query : '';
+        applyFilter();
+      });
+
+      if (filterState.title) applyFilter();
     }
 
     const progress = document.getElementById('plain-progress');
