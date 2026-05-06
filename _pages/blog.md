@@ -32,17 +32,18 @@ plain_body_class: plain-writing-page
     {% endfor %}
   </div>
 
-  {% assign current_year = '' %}
-  {% for post in site.posts %}
-    {% assign year = post.date | date: '%Y' %}
-    {% if year != current_year %}
-      {% unless forloop.first %}
-        </section>
-      {% endunless %}
-      <section class="plain-year" data-year-group>
-        <div class="plain-year-row">{{ year }}</div>
-      {% assign current_year = year %}
-    {% endif %}
+{% assign current_year = '' %}
+{% for post in site.posts %}
+{% assign year = post.date | date: '%Y' %}
+{% if year != current_year %}
+{% unless forloop.first %}
+
+</section>
+{% endunless %}
+<section class="plain-year" data-year-group>
+<div class="plain-year-row">{{ year }}</div>
+{% assign current_year = year %}
+{% endif %}
 
     {% assign primary_tag = post.tags | first %}
     {% if primary_tag == nil or primary_tag == '' %}
@@ -83,7 +84,8 @@ plain_body_class: plain-writing-page
     {% if forloop.last %}
       </section>
     {% endif %}
-  {% endfor %}
+
+{% endfor %}
 
   <div class="plain-empty" id="plain-writing-empty" hidden>no entries match this filter.</div>
 </main>

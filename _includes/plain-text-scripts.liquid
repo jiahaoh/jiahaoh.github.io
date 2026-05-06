@@ -1,42 +1,39 @@
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const input = document.getElementById("plain-prompt");
-    const suggest = document.getElementById("plain-suggest");
-    const history = document.getElementById("plain-history");
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('plain-prompt');
+    const suggest = document.getElementById('plain-suggest');
+    const history = document.getElementById('plain-history');
 
     if (input && suggest && history) {
       const commands = [
-        { cmd: "blog", desc: "Notes, essays, and working drafts.", href: "{{ '/blog/' | relative_url }}" },
-        { cmd: "help", desc: "Show all available commands.", href: null },
+        { cmd: 'blog', desc: 'Notes, essays, and working drafts.', href: "{{ '/blog/' | relative_url }}" },
+        { cmd: 'help', desc: 'Show all available commands.', href: null },
       ];
-      const aliases = { writing: "blog" };
+      const aliases = { writing: 'blog' };
 
       function renderPrompt() {
-        const query = input.value.trim().toLowerCase().replace(/^\//, "");
+        const query = input.value.trim().toLowerCase().replace(/^\//, '');
         const matches = query ? commands.filter((command) => command.cmd.startsWith(query)) : commands;
         suggest.innerHTML = matches
           .map(
             (command, index) => `
-              <a class="sg-row${index === 0 ? " active" : ""}" data-cmd="${command.cmd}" href="${command.href || "#"}">
+              <a class="sg-row${index === 0 ? ' active' : ''}" data-cmd="${command.cmd}" href="${command.href || '#'}">
                 <span class="arr">→</span>
                 <span class="cmd">/${command.cmd}</span>
                 <span class="desc">${command.desc}</span>
               </a>
             `
           )
-          .join("");
+          .join('');
       }
 
       function writeHistory(command, message) {
         history.hidden = false;
-        history.insertAdjacentHTML(
-          "beforeend",
-          `<div class="echo"><span class="sig">$ </span>${command}</div><div>${message}</div>`
-        );
+        history.insertAdjacentHTML('beforeend', `<div class="echo"><span class="sig">$ </span>${command}</div><div>${message}</div>`);
       }
 
       function run(command) {
-        const raw = (command || "").trim().toLowerCase().replace(/^\//, "");
+        const raw = (command || '').trim().toLowerCase().replace(/^\//, '');
         const normalized = aliases[raw] || raw;
         if (!normalized) return;
         const hit = commands.find((item) => item.cmd === normalized);
@@ -46,28 +43,31 @@
           return;
         }
 
-        if (normalized === "help" || normalized === "?") {
+        if (normalized === 'help' || normalized === '?') {
           writeHistory(
             normalized,
-            `available: ${commands.filter((item) => item.cmd !== "help").map((item) => item.cmd).join(" · ")}`
+            `available: ${commands
+              .filter((item) => item.cmd !== 'help')
+              .map((item) => item.cmd)
+              .join(' · ')}`
           );
         } else {
           writeHistory(normalized, `command not found: <b>${normalized}</b> · try <span class="accent">help</span>`);
         }
 
-        input.value = "";
+        input.value = '';
         renderPrompt();
       }
 
-      input.addEventListener("input", renderPrompt);
-      input.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
+      input.addEventListener('input', renderPrompt);
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
           event.preventDefault();
           run(input.value);
         }
-        if (event.key === "Tab") {
+        if (event.key === 'Tab') {
           event.preventDefault();
-          const query = input.value.trim().toLowerCase().replace(/^\//, "");
+          const query = input.value.trim().toLowerCase().replace(/^\//, '');
           const match = (query ? commands.filter((command) => command.cmd.startsWith(query)) : commands)[0];
           if (match) {
             input.value = match.cmd;
@@ -75,8 +75,8 @@
           }
         }
       });
-      suggest.addEventListener("click", (event) => {
-        const row = event.target.closest(".sg-row");
+      suggest.addEventListener('click', (event) => {
+        const row = event.target.closest('.sg-row');
         if (!row) return;
         const hit = commands.find((item) => item.cmd === row.dataset.cmd);
         if (hit && hit.href) return;
@@ -88,27 +88,27 @@
       renderPrompt();
     }
 
-    const filters = document.getElementById("plain-writing-filters");
+    const filters = document.getElementById('plain-writing-filters');
     if (filters) {
-      const buttons = Array.from(filters.querySelectorAll(".plain-filter"));
-      const sections = Array.from(document.querySelectorAll("[data-year-group]"));
-      const empty = document.getElementById("plain-writing-empty");
+      const buttons = Array.from(filters.querySelectorAll('.plain-filter'));
+      const sections = Array.from(document.querySelectorAll('[data-year-group]'));
+      const empty = document.getElementById('plain-writing-empty');
 
       function applyFilter(tag) {
         let anyVisible = false;
 
         buttons.forEach((button) => {
           const isActive = button.dataset.tag === tag;
-          button.classList.toggle("on", isActive);
-          button.setAttribute("aria-pressed", isActive ? "true" : "false");
+          button.classList.toggle('on', isActive);
+          button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
 
         sections.forEach((section) => {
           let sectionVisible = false;
 
-          section.querySelectorAll(".plain-entry").forEach((entry) => {
-            const tags = (entry.dataset.tags || "").split(/\s+/).filter(Boolean);
-            const show = tag === "all" || tags.includes(tag);
+          section.querySelectorAll('.plain-entry').forEach((entry) => {
+            const tags = (entry.dataset.tags || '').split(/\s+/).filter(Boolean);
+            const show = tag === 'all' || tags.includes(tag);
             entry.hidden = !show;
             sectionVisible = sectionVisible || show;
           });
@@ -120,14 +120,14 @@
         if (empty) empty.hidden = anyVisible;
       }
 
-      filters.addEventListener("click", (event) => {
-        const button = event.target.closest(".plain-filter");
+      filters.addEventListener('click', (event) => {
+        const button = event.target.closest('.plain-filter');
         if (!button) return;
         applyFilter(button.dataset.tag);
       });
     }
 
-    const progress = document.getElementById("plain-progress");
+    const progress = document.getElementById('plain-progress');
     if (progress) {
       const updateProgress = () => {
         const root = document.documentElement;
@@ -136,59 +136,57 @@
         progress.style.width = `${Math.max(0, Math.min(100, pct))}%`;
       };
 
-      document.addEventListener("scroll", updateProgress, { passive: true });
+      document.addEventListener('scroll', updateProgress, { passive: true });
       updateProgress();
     }
 
-    const toc = document.getElementById("plain-toc");
-    const headings = Array.from(document.querySelectorAll(".plain-post-body h2"));
+    const toc = document.getElementById('plain-toc');
+    const headings = Array.from(document.querySelectorAll('.plain-post-body h2'));
     if (toc && headings.length) {
-      toc.innerHTML = "";
+      toc.innerHTML = '';
 
       headings.forEach((heading) => {
         if (!heading.id) {
           heading.id = heading.textContent
             .trim()
             .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-|-$/g, "");
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
         }
 
-        const item = document.createElement("li");
-        const link = document.createElement("a");
+        const item = document.createElement('li');
+        const link = document.createElement('a');
         link.href = `#${heading.id}`;
-        link.textContent = heading.textContent.replace(/^\d+\s*/, "");
+        link.textContent = heading.textContent.replace(/^\d+\s*/, '');
         item.append(link);
         toc.append(item);
       });
 
-      const map = Object.fromEntries(
-        Array.from(toc.querySelectorAll("a")).map((link) => [link.hash.slice(1), link.parentElement])
-      );
+      const map = Object.fromEntries(Array.from(toc.querySelectorAll('a')).map((link) => [link.hash.slice(1), link.parentElement]));
 
       const setActive = (id) => {
-        toc.querySelectorAll("li").forEach((item) => item.classList.remove("active"));
-        if (map[id]) map[id].classList.add("active");
+        toc.querySelectorAll('li').forEach((item) => item.classList.remove('active'));
+        if (map[id]) map[id].classList.add('active');
       };
 
       setActive(headings[0].id);
 
-      if ("IntersectionObserver" in window) {
+      if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
               if (entry.isIntersecting) setActive(entry.target.id);
             });
           },
-          { rootMargin: "0px 0px -70% 0px", threshold: 0 }
+          { rootMargin: '0px 0px -70% 0px', threshold: 0 }
         );
         headings.forEach((heading) => observer.observe(heading));
       }
     }
 
-    document.querySelectorAll(".plain-post-body .code-display-wrapper").forEach((wrapper) => {
-      const button = wrapper.querySelector(".copy");
-      if (button) button.setAttribute("title", "Copy code");
+    document.querySelectorAll('.plain-post-body .code-display-wrapper').forEach((wrapper) => {
+      const button = wrapper.querySelector('.copy');
+      if (button) button.setAttribute('title', 'Copy code');
     });
   });
 </script>

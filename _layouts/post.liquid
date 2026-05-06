@@ -22,7 +22,8 @@ layout: plain-text
       <span class="v">
         {{ page.date | date: '%Y-%m-%d' }}
         {% if updated %}
-          <br><span class="edit">edit {{ updated | date: '%m-%d' }}</span>
+          <br>
+          <span class="edit">edit {{ updated | date: '%m-%d' }}</span>
         {% endif %}
       </span>
     </div>
@@ -60,7 +61,8 @@ layout: plain-text
   <nav class="plain-crumbs" aria-label="Breadcrumb">
     <span class="sigil">$</span>cat
     <span class="sep">·</span>
-    <a href="{{ '/' | relative_url }}">~</a><span class="sep">/</span><a href="{{ '/blog/' | relative_url }}">blog</a><span class="sep">/</span><a href="{{ year | prepend: '/blog/' | relative_url }}">{{ year }}</a><span class="sep">/</span><span class="here">{{ slug }}</span>
+    <a href="{{ '/' | relative_url }}">~</a><span class="sep">/</span><a href="{{ '/blog/' | relative_url }}">blog</a><span class="sep">/</span
+    ><a href="{{ year | prepend: '/blog/' | relative_url }}">{{ year }}</a><span class="sep">/</span><span class="here">{{ slug }}</span>
   </nav>
 
   <header>
