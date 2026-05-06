@@ -113,6 +113,42 @@ body.plain-text-shell button {
   font-style: italic;
 }
 
+.terminal .bio .bio-typer {
+  display: inline;
+  max-width: 100%;
+  vertical-align: baseline;
+}
+
+.bio-typer-text {
+  display: inline;
+  min-width: 0;
+  color: inherit;
+  line-height: inherit;
+  white-space: normal;
+}
+
+.bio-typer-caret {
+  display: inline-block;
+  width: 0.1em;
+  height: 1.05em;
+  margin-left: 0.06em;
+  background: var(--plain-accent);
+  animation: bio-caret-blink 1s steps(2, start) infinite;
+  vertical-align: -0.12em;
+}
+
+@keyframes bio-caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bio-typer-caret {
+    animation: none;
+  }
+}
+
 .promptline {
   display: flex;
   gap: 12px;
@@ -199,6 +235,65 @@ body.plain-text-shell button {
 .history .sig,
 .history .accent {
   color: var(--plain-accent);
+}
+
+body.plain-command-open {
+  overflow: hidden;
+}
+
+.plain-command-palette[hidden] {
+  display: none;
+}
+
+.plain-command-palette {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: start center;
+  padding: 15vh 22px 22px;
+  font-family: var(--plain-mono);
+}
+
+.plain-command-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(251, 250, 247, 0.78);
+  backdrop-filter: blur(10px);
+}
+
+.plain-command-panel {
+  position: relative;
+  width: min(520px, 100%);
+  overflow: hidden;
+  border: 1px solid var(--plain-rule);
+  border-radius: 8px;
+  background: var(--plain-surface);
+  box-shadow: 0 24px 80px rgba(23, 23, 23, 0.14);
+}
+
+.plain-command-line .sigil {
+  color: var(--plain-accent);
+}
+
+.plain-command-line {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-height: 54px;
+  padding: 0 14px;
+  margin: 0;
+}
+
+.plain-command-line input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--plain-ink);
+  caret-color: var(--plain-accent);
+  font: inherit;
 }
 
 .plain-idx {
@@ -1061,6 +1156,10 @@ body.plain-text-shell button {
 
   .sg-row .desc {
     grid-column: 2;
+  }
+
+  .plain-command-palette {
+    padding: 10vh 14px 14px;
   }
 
   .plain-crumbs {
