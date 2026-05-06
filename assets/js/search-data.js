@@ -16,7 +16,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/blog/";
           },
-        },{id: "post-welcome-to-my-blog",
+        },{id: "post-中文字体测试-一些慢笔记",
+        
+          title: "中文字体测试：一些慢笔记",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/chinese-font-test/";
+          
+        },
+      },{id: "post-welcome-to-my-blog",
         
           title: "Welcome to My Blog",
         
