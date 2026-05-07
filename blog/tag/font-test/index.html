@@ -126,7 +126,9 @@
       let phrases = [];
 
       try {
-        phrases = JSON.parse(typer.dataset.phrases || '[]').filter(Boolean);
+        phrases = JSON.parse(typer.dataset.phrases || '[]')
+          .map(normalizePhrase)
+          .filter((phrase) => phrase.content);
       } catch (error) {
         phrases = [];
       }
@@ -134,17 +136,17 @@
       if (!text || phrases.length === 0) return null;
 
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      text.textContent = phrases[0];
+      renderPhrase(phrases[0]);
       if (reducedMotion) {
         return {
           typeAbout() {
-            text.textContent = typer.dataset.about || phrases[0];
+            renderPhrase(normalizePhrase({ text: typer.dataset.about || phrases[0].content, color: typer.dataset.aboutColor }));
           },
         };
       }
 
       let index = 0;
-      let charIndex = phrases[index].length;
+      let charIndex = phrases[index].content.length;
       let deleting = false;
       let timer = null;
       const hiddenDelay = 800;
@@ -165,9 +167,9 @@
         }
 
         const phrase = phrases[index];
-        text.textContent = phrase.slice(0, charIndex);
+        renderPhrase(phrase, charIndex);
 
-        if (!deleting && charIndex === phrase.length) {
+        if (!deleting && charIndex === phrase.content.length) {
           deleting = true;
           schedule(tickCycle, holdDelay);
           return;
@@ -185,10 +187,11 @@
       };
 
       const typePhrase = (phrase) => {
-        if (!phrase) return;
+        const normalizedPhrase = normalizePhrase(phrase);
+        if (!normalizedPhrase.content) return;
 
         window.clearTimeout(timer);
-        text.textContent = '';
+        renderPhrase(normalizedPhrase, 0);
         let nextIndex = 0;
 
         const tickCustom = () => {
@@ -198,9 +201,9 @@
           }
 
           nextIndex += 1;
-          text.textContent = phrase.slice(0, nextIndex);
+          renderPhrase(normalizedPhrase, nextIndex);
 
-          if (nextIndex < phrase.length) {
+          if (nextIndex < normalizedPhrase.content.length) {
             schedule(tickCustom, typeDelay);
           }
         };
@@ -212,9 +215,178 @@
 
       return {
         typeAbout() {
-          typePhrase(typer.dataset.about || phrases[0]);
+          typePhrase({ text: typer.dataset.about || phrases[0].content, color: typer.dataset.aboutColor });
         },
       };
+
+      function normalizePhrase(phrase) {
+        if (typeof phrase === 'string') {
+          return { type: 'text', content: phrase, color: '' };
+        }
+
+        if (!phrase || typeof phrase !== 'object') {
+          return { type: 'text', content: '', color: '' };
+        }
+
+        if (phrase.type === 'code') {
+          const lines = Array.isArray(phrase.lines) ? phrase.lines : [];
+          return {
+            type: 'code',
+            language: (phrase.language || 'text').toString().toLowerCase(),
+            content: (lines.length ? lines.join('\n') : phrase.code || phrase.text || '').toString(),
+            color: phrase.color || '',
+          };
+        }
+
+        const parts = normalizeTextParts(phrase.parts);
+        if (parts.length) {
+          return {
+            type: 'text',
+            content: parts.map((part) => part.text).join(''),
+            color: phrase.color || '',
+            parts,
+          };
+        }
+
+        return { type: 'text', content: (phrase.text || phrase.phrase || '').toString(), color: phrase.color || '', parts: [] };
+      }
+
+      function renderPhrase(phrase, length) {
+        const visibleLength = typeof length === 'number' ? length : phrase.content.length;
+        const content = phrase.content.slice(0, visibleLength);
+        const isCode = phrase.type === 'code';
+
+        applyPhraseColor(phrase.color);
+        typer.classList.toggle('is-code', isCode);
+
+        if (!isCode) {
+          if (phrase.parts && phrase.parts.length) {
+            text.innerHTML = renderTextParts(phrase.parts, visibleLength);
+            return;
+          }
+
+          text.textContent = content;
+          return;
+        }
+
+        text.innerHTML = renderCode(content, phrase.language);
+      }
+
+      function normalizeTextParts(parts) {
+        if (!Array.isArray(parts)) return [];
+
+        return parts
+          .map((part) => {
+            if (typeof part === 'string') return { text: part, color: '' };
+            if (!part || typeof part !== 'object') return { text: '', color: '' };
+            return { text: (part.text || '').toString(), color: part.color || '' };
+          })
+          .filter((part) => part.text);
+      }
+
+      function renderTextParts(parts, visibleLength) {
+        let remaining = visibleLength;
+
+        return parts
+          .map((part) => {
+            if (remaining <= 0) return '';
+
+            const visibleText = part.text.slice(0, remaining);
+            remaining -= visibleText.length;
+
+            if (!visibleText) return '';
+
+            const resolvedColor = resolvePhraseColor(part.color);
+            if (!resolvedColor) return escapeHtml(visibleText);
+
+            return `<span class="bio-inline-color" style="--bio-inline-color: ${resolvedColor}">${escapeHtml(visibleText)}</span>`;
+          })
+          .join('');
+      }
+
+      function renderCode(content, language) {
+        const lang = cleanLanguage(language);
+        const lines = content.split('\n');
+        const renderedLines = lines.map((line) => highlightLine(line, lang) || '&#8203;').join('<br>');
+
+        return `<span class="bio-code">${renderedLines}</span>`;
+      }
+
+      function highlightLine(line, language) {
+        const patterns = {
+          python:
+            /(#.*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b(def|return|for|in|while|if|else|elif|import|from|as|class|with|lambda|None|True|False|and|or|not)\b|\b(\d+(?:\.\d+)?)\b|\b([A-Za-z_]\w*)(?=\s*\()|\b([A-Za-z_]\w*)\b/g,
+          shell: /(#.*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b(cd|find|open|python|bundle|git|jekyll|npm|npx|echo|cat|rg)\b|(^|\s)(--?[\w-]+)/g,
+        };
+        const pattern = patterns[language];
+
+        if (!pattern) return escapeHtml(line);
+
+        let html = '';
+        let lastIndex = 0;
+
+        Array.from(line.matchAll(pattern)).forEach((match) => {
+          html += escapeHtml(line.slice(lastIndex, match.index));
+          if (match[1]) html += token('comment', match[0]);
+          else if (match[2]) html += token('string', match[0]);
+          else if (match[3]) html += token('keyword', match[0]);
+          else if (language === 'shell' && match[5]) html += escapeHtml(match[4]) + token('keyword', match[5]);
+          else if (match[4]) html += token('number', match[0]);
+          else if (language === 'python' && match[5]) html += token('function', match[0]);
+          else if (language === 'python' && match[6]) html += token('variable', match[0]);
+          lastIndex = match.index + match[0].length;
+        });
+
+        return html + escapeHtml(line.slice(lastIndex));
+      }
+
+      function token(kind, value) {
+        return `<span class="tok tok-${kind}">${escapeHtml(value)}</span>`;
+      }
+
+      function escapeHtml(value) {
+        return value.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function cleanLanguage(language) {
+        return (
+          (language || 'text')
+            .toString()
+            .toLowerCase()
+            .replace(/[^a-z0-9_-]/g, '') || 'text'
+        );
+      }
+
+      function applyPhraseColor(color) {
+        const resolvedColor = resolvePhraseColor(color);
+
+        if (resolvedColor) {
+          typer.style.setProperty('--bio-phrase-color', resolvedColor);
+        } else {
+          typer.style.removeProperty('--bio-phrase-color');
+        }
+      }
+
+      function resolvePhraseColor(color) {
+        const namedColors = {
+          ink: 'var(--plain-ink)',
+          soft: 'var(--plain-ink-soft)',
+          muted: 'var(--plain-ink-mute)',
+          faint: 'var(--plain-ink-faint)',
+          accent: 'var(--plain-accent)',
+          keyword: 'var(--plain-code-kw)',
+          string: 'var(--plain-code-string)',
+          number: 'var(--plain-code-number)',
+          function: 'var(--plain-code-function)',
+          variable: 'var(--plain-code-variable)',
+          comment: 'var(--plain-code-comment)',
+        };
+        const value = (color || '').toString().trim().toLowerCase();
+
+        if (namedColors[value]) return namedColors[value];
+        if (/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(value)) return value;
+        return '';
+      }
     }
 
     function initPlainCommandPalette() {
