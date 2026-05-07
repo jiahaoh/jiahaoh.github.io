@@ -1,6 +1,18 @@
 ---
 layout: plain-text
 ---
+{% assign home_content = site.data.home %}
+{% assign home_phrases = home_content.phrases | default: empty %}
+{% assign home_first_phrase = home_phrases.first | default: home_content.about %}
+{% assign home_initial_phrase = home_first_phrase %}
+{% if home_first_phrase.text %}
+  {% assign home_initial_phrase = home_first_phrase.text %}
+{% elsif home_first_phrase.parts %}
+  {% assign home_initial_phrase = home_first_phrase.parts | map: 'text' | join: '' %}
+{% elsif home_first_phrase.lines %}
+  {% assign home_initial_phrase = home_first_phrase.lines | join: ' ' %}
+{% endif %}
+
 <main class="plain-home" role="main">
   <div class="wrap">
     <div class="terminal">
@@ -10,11 +22,11 @@ layout: plain-text
           <span
             class="bio-typer"
             data-plain-bio-typer
-            data-about="Hi, I'm Jiahao Huang, a Ph.D. candidate at MIT working at the intersection of spatial biology, machine learning, and AI for science. This site is where I keep working notes, research sketches, and ideas in public."
-            data-phrases='["A small, slow garden of working notes on AI for science — by Jiahao, Ph.D. candidate at MIT.","Working notes on spatial biology, AI for science, and tools I am learning in public.","一些关于空间生物学、机器学习和科研工具的慢笔记。","Slow questions, research sketches, and field notes from a Ph.D. candidate at MIT.","A quiet CLI-shaped notebook for ideas that are still becoming useful."]'
+            data-about="{{ home_content.about | escape }}"
+            data-about-color="{{ home_content.about_color | default: '' | escape }}"
+            data-phrases="{{ home_phrases | jsonify | escape }}"
           >
-            <span class="bio-typer-text">A small, slow garden of working notes on AI for science — by Jiahao, Ph.D. candidate at MIT.</span
-            ><span class="bio-typer-caret" aria-hidden="true"></span>
+            <span class="bio-typer-text">{{ home_initial_phrase | escape }}</span><span class="bio-typer-caret" aria-hidden="true"></span>
           </span>
         </h1>
 

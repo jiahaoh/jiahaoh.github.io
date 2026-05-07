@@ -13,6 +13,11 @@ body.plain-text-shell {
   --plain-rule: rgba(23, 23, 23, 0.1);
   --plain-rule-soft: rgba(23, 23, 23, 0.075);
   --plain-code-kw: #94620a;
+  --plain-code-string: #3f7f52;
+  --plain-code-number: #7758a6;
+  --plain-code-function: #2f6fbd;
+  --plain-code-variable: #7758a6;
+  --plain-code-comment: rgba(23, 23, 23, 0.48);
   --plain-serif: "Lora", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", Georgia, serif;
   --plain-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
@@ -119,12 +124,51 @@ body.plain-text-shell button {
   vertical-align: baseline;
 }
 
-.bio-typer-text {
+body.plain-text-shell .bio-typer-text {
   display: inline;
   min-width: 0;
-  color: inherit;
+  color: var(--bio-phrase-color, inherit);
   line-height: inherit;
   white-space: normal;
+}
+
+body.plain-text-shell .bio-code {
+  display: inline;
+  color: inherit;
+  font-family: var(--plain-mono);
+  font-size: 0.82em;
+  font-weight: 400;
+  line-height: inherit;
+  vertical-align: middle;
+  white-space: pre-wrap;
+}
+
+body.plain-text-shell .bio-inline-color {
+  color: var(--bio-inline-color, inherit);
+}
+
+body.plain-text-shell .tok-keyword {
+  color: var(--plain-code-kw);
+}
+
+body.plain-text-shell .tok-string {
+  color: var(--plain-code-string);
+}
+
+body.plain-text-shell .tok-number {
+  color: var(--plain-code-number);
+}
+
+body.plain-text-shell .tok-function {
+  color: var(--plain-code-function);
+}
+
+body.plain-text-shell .tok-variable {
+  color: var(--plain-code-variable);
+}
+
+body.plain-text-shell .tok-comment {
+  color: var(--plain-code-comment);
 }
 
 .bio-typer-caret {
