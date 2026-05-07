@@ -113,6 +113,10 @@ body.plain-text-shell button {
   line-height: 1.48;
 }
 
+.terminal .bio[hidden] {
+  display: none;
+}
+
 .terminal .bio em {
   color: var(--plain-accent);
   font-style: italic;
@@ -677,6 +681,36 @@ body.plain-command-open {
   line-height: 1.7;
 }
 
+.plain-home-dashboard {
+  display: grid;
+  max-width: 780px;
+  padding: 2px 0;
+  margin: 0 0 38px;
+  color: var(--plain-ink-soft);
+  font-family: var(--plain-mono);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.plain-home-dashboard[hidden] {
+  display: none;
+}
+
+.plain-home-dashboard-row {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 16px;
+  padding: 3px 0;
+}
+
+.plain-home-dashboard .key {
+  color: var(--plain-accent);
+}
+
+.plain-home-dashboard .value {
+  color: var(--plain-ink-soft);
+}
+
 .plain-pdf-link {
   flex: 0 0 auto;
   color: var(--plain-accent) !important;
@@ -1189,6 +1223,15 @@ body.plain-command-open {
 
   .plain-page-title {
     font-size: 27px;
+  }
+
+  .plain-home-dashboard-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .plain-home-dashboard .key {
+    font-size: 11px;
   }
 
   .sg-row {

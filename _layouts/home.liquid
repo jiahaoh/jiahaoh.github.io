@@ -18,7 +18,7 @@ layout: plain-text
     <div class="terminal">
       <div class="titlebar">jiahaoh.io</div>
       <div class="screen">
-        <h1 class="bio">
+        <h1 class="bio" id="plain-home-bio">
           <span
             class="bio-typer"
             data-plain-bio-typer
@@ -29,6 +29,21 @@ layout: plain-text
             <span class="bio-typer-text">{{ home_initial_phrase | escape }}</span><span class="bio-typer-caret" aria-hidden="true"></span>
           </span>
         </h1>
+
+        <section class="plain-home-dashboard" id="plain-home-dashboard" aria-label="Current status" hidden>
+          <div class="plain-home-dashboard-row">
+            <span class="key">now</span>
+            <span class="value">Spatial biology, imaging as measurement, and AI-assisted analysis tooling.</span>
+          </div>
+          <div class="plain-home-dashboard-row">
+            <span class="key">question</span>
+            <span class="value">How should image-derived signals enter biological reasoning?</span>
+          </div>
+          <div class="plain-home-dashboard-row">
+            <span class="key">next</span>
+            <span class="value">Turn rough working notes into a clearer public trail.</span>
+          </div>
+        </section>
 
         <div class="promptline">
           <span class="sigil">$</span>
