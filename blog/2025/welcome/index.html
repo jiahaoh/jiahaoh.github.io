@@ -22,6 +22,8 @@
     const input = document.getElementById('plain-prompt');
     const suggest = document.getElementById('plain-suggest');
     const history = document.getElementById('plain-history');
+    const dashboard = document.getElementById('plain-home-dashboard');
+    const bio = document.getElementById('plain-home-bio');
     const bioController = initPlainBioTyper();
     initPlainCommandPalette();
 
@@ -54,11 +56,28 @@
         history.insertAdjacentHTML('beforeend', `<div class="echo"><span class="sig">$ </span>${command}</div><div>${message}</div>`);
       }
 
+      function resetHome() {
+        if (dashboard) dashboard.hidden = true;
+        if (bio) bio.hidden = false;
+        input.value = '';
+        history.hidden = true;
+        history.innerHTML = '';
+        renderPrompt();
+      }
+
       function run(command) {
         const raw = (command || '').trim().toLowerCase().replace(/^\//, '');
         const normalized = aliases[raw] || raw;
         if (!normalized) return;
         const hit = commands.find((item) => item.cmd === normalized);
+
+        if (normalized === 'status') {
+          if (bio) bio.hidden = true;
+          if (dashboard) dashboard.hidden = false;
+          input.value = '';
+          renderPrompt();
+          return;
+        }
 
         if (hit && hit.href) {
           window.location.href = hit.href;
@@ -66,6 +85,8 @@
         }
 
         if (hit && hit.action === 'about') {
+          if (dashboard) dashboard.hidden = true;
+          if (bio) bio.hidden = false;
           if (bioController) bioController.typeAbout();
           input.value = '';
           renderPrompt();
@@ -90,6 +111,12 @@
 
       input.addEventListener('input', renderPrompt);
       input.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          resetHome();
+          return;
+        }
+
         if (event.key === 'Enter') {
           event.preventDefault();
           run(input.value);
@@ -396,6 +423,7 @@
         { cmd: 'cd ~', desc: 'Return to the landing page.', href: "/" },
         { cmd: 'blog', desc: 'Open the writing index.', href: "/blog/" },
       ];
+      const aliases = { writing: 'blog' };
       const blogUrl = "/blog/";
 
       const palette = document.createElement('div');
@@ -450,8 +478,9 @@
 
       function runPaletteCommand(command) {
         const raw = (command || '').trim().toLowerCase().replace(/^\//, '');
-        const hit = commands.find((item) => item.cmd === raw);
-        const findMatch = raw.match(/^find(?:\s+(.+))?$/);
+        const normalized = aliases[raw] || raw;
+        const hit = commands.find((item) => item.cmd === normalized);
+        const findMatch = normalized.match(/^find(?:\s+(.+))?$/);
         if (!hit && !findMatch) return;
 
         closePalette();
