@@ -4,20 +4,20 @@ about: >-
   This site is where I keep working notes, research sketches, and ideas in public.
 about_color: ink
 phrases:
-  # - type: text
-  #   text: Eat. Code. Gym/DOTA. Sleep. Repeat.
-  #   color: ink
+  - type: text
+    text: Eat. Code. Gym/DOTA. Sleep. Repeat.
+    color: ink
 
-  # - type: text
-  #   color: ink
-  #   parts:
-  #     - text: "It's good to be a "
-  #     - text: "Human"
-  #       color: accent
-  #     - text: ", 有点"
-  #     - text: "人"
-  #       color: accent
-  #     - text: "味儿."
+  - type: text
+    color: ink
+    parts:
+      - text: "It's good to be a "
+      - text: "Human"
+        color: accent
+      - text: ", 有点"
+      - text: "人"
+        color: accent
+      - text: "味儿."
 
   - type: code
     language: python
