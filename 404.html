@@ -54,9 +54,20 @@
           .join('');
       }
 
-      function writeHistory(command, message) {
+      function writeHistory(command, message, options = {}) {
         history.hidden = false;
-        history.insertAdjacentHTML('beforeend', `<div class="echo"><span class="sig">$ </span>${command}</div><div>${message}</div>`);
+        const key = options.key ? ` data-history-key="${options.key}"` : '';
+        const entry = `<div class="history-entry"${key}><div class="echo"><span class="sig">$ </span>${command}</div><div>${message}</div></div>`;
+
+        if (options.key) {
+          const existing = history.querySelector(`[data-history-key="${options.key}"]`);
+          if (existing) {
+            existing.outerHTML = entry;
+            return;
+          }
+        }
+
+        history.insertAdjacentHTML('beforeend', entry);
       }
 
       function resetHome() {
@@ -110,7 +121,7 @@
         }
 
         if (normalized === 'help' || normalized === '?') {
-          writeHistory(normalized, `available: ${helpCommands.join(' · ')}`);
+          writeHistory(normalized, `available: ${helpCommands.join(' · ')}`, { key: 'help' });
         } else {
           writeHistory(normalized, `command not found: <b>${normalized}</b> · try <span class="accent">help</span>`);
         }
