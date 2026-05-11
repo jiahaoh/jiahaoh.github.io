@@ -45,6 +45,51 @@ layout: plain-text
           </div>
         </section>
 
+        <section
+          class="plain-visit-panel"
+          id="plain-visit-panel"
+          aria-label="Visit map"
+          data-visit-endpoint="{{ site.plain_visits_endpoint | default: '' | escape }}"
+          hidden
+        >
+          <div class="plain-visit-head">
+            <span class="plain-visit-command">/visits</span>
+            <span class="plain-visit-mode" id="plain-visit-mode">demo</span>
+          </div>
+          <div class="plain-visit-stats" aria-live="polite">
+            <div class="plain-visit-stat">
+              <span class="key">total views</span>
+              <span class="value" id="plain-visit-total">--</span>
+            </div>
+            <div class="plain-visit-stat">
+              <span class="key">today</span>
+              <span class="value" id="plain-visit-today">--</span>
+            </div>
+            <div class="plain-visit-stat">
+              <span class="key">regions</span>
+              <span class="value" id="plain-visit-region-count">--</span>
+            </div>
+            <div class="plain-visit-stat">
+              <span class="key">updated</span>
+              <span class="value" id="plain-visit-updated">--</span>
+            </div>
+          </div>
+          <div class="plain-visit-visual">
+            <div
+              class="plain-visit-map"
+              id="plain-visit-map"
+              data-map-src="{{ '/assets/maps/worldLow-pixels.svg' | relative_url }}"
+              role="img"
+              aria-label="Pixel world map of approximate visitor regions"
+            ></div>
+            <aside class="plain-visit-ranking" aria-label="Top visitor countries">
+              <div class="plain-visit-ranking-title">countries</div>
+              <ol class="plain-visit-regions" id="plain-visit-regions"></ol>
+            </aside>
+          </div>
+          <div class="plain-visit-note" id="plain-visit-note">approx. region only &middot; no IPs stored</div>
+        </section>
+
         <div class="promptline">
           <span class="sigil">$</span>
           <input

@@ -1,0 +1,13 @@
+name = "jiahaoh-visits"
+main = "worker.js"
+compatibility_date = "2026-05-11"
+workers_dev = true
+preview_urls = true
+
+kv_namespaces = [
+  { binding = "VISITS_KV", id = "8b5e017002a14aed847faa290b7f2d54" }
+]
+
+[vars]
+SITE_KEY = "jiahaoh"
+ALLOWED_ORIGINS = "https://jiahaoh.info,https://jiahaoh.github.io,http://localhost:8080"
