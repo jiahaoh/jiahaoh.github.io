@@ -711,6 +711,83 @@ body.plain-command-open {
   color: var(--plain-ink-soft);
 }
 
+.plain-feedback-panel {
+  display: grid;
+  max-width: 820px;
+  padding: 2px 0 4px;
+  margin: 0 0 38px;
+  color: var(--plain-ink-soft);
+  font-family: var(--plain-mono);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.plain-feedback-panel[hidden] {
+  display: none;
+}
+
+.plain-feedback-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--plain-rule-soft);
+}
+
+.plain-feedback-command {
+  color: var(--plain-accent);
+}
+
+.plain-feedback-mode {
+  color: var(--plain-ink-faint);
+  font-size: 11px;
+}
+
+.plain-feedback-note {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 16px;
+  padding: 12px 0 14px;
+}
+
+.plain-feedback-note .key {
+  color: var(--plain-accent);
+}
+
+.plain-feedback-note .value,
+.plain-feedback-fallback {
+  color: var(--plain-ink-soft);
+}
+
+.plain-feedback-thread {
+  min-height: 180px;
+}
+
+.plain-feedback-thread:empty {
+  min-height: 0;
+}
+
+.plain-feedback-thread .giscus,
+.plain-feedback-thread .giscus-frame {
+  width: 100%;
+}
+
+.plain-feedback-thread .giscus-frame {
+  min-height: 220px;
+  border: 0;
+  opacity: 1 !important;
+}
+
+.plain-feedback-fallback {
+  margin: 0;
+  font-size: 12px;
+}
+
+.plain-feedback-fallback[hidden] {
+  display: none;
+}
+
 .plain-visit-panel {
   display: grid;
   max-width: 880px;
@@ -1392,6 +1469,21 @@ body.plain-command-open {
   }
 
   .plain-home-dashboard .key {
+    font-size: 11px;
+  }
+
+  .plain-feedback-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .plain-feedback-note {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .plain-feedback-note .key {
     font-size: 11px;
   }
 

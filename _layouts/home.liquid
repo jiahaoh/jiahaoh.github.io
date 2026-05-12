@@ -46,6 +46,39 @@ layout: plain-text
         </section>
 
         <section
+          class="plain-feedback-panel"
+          id="plain-feedback-panel"
+          aria-label="Feedback"
+          data-giscus-repo="{{ site.giscus.repo | default: '' | escape }}"
+          data-giscus-repo-id="{{ site.giscus.repo_id | default: '' | escape }}"
+          data-giscus-category="{{ site.giscus.category | default: '' | escape }}"
+          data-giscus-category-id="{{ site.giscus.category_id | default: '' | escape }}"
+          data-giscus-mapping="specific"
+          data-giscus-term="/feedback"
+          data-giscus-strict="{{ site.giscus.strict | default: 1 }}"
+          data-giscus-reactions-enabled="{{ site.giscus.reactions_enabled | default: 1 }}"
+          data-giscus-emit-metadata="{{ site.giscus.emit_metadata | default: 0 }}"
+          data-giscus-input-position="{{ site.giscus.input_position | default: 'bottom' | escape }}"
+          data-giscus-theme="{{ site.giscus.theme | default: 'preferred_color_scheme' | escape }}"
+          data-giscus-lang="{{ site.giscus.lang | default: site.lang | default: 'en' | escape }}"
+          hidden
+        >
+          <div class="plain-feedback-head">
+            <span class="plain-feedback-command">/feedback</span>
+            <span class="plain-feedback-mode">github discussions</span>
+          </div>
+          <div class="plain-feedback-note">
+            <span class="key">open line</span>
+            <span class="value">Questions, corrections, collaboration notes, or anything that should find me.</span>
+          </div>
+          <div class="plain-feedback-thread" id="plain-feedback-thread"></div>
+          <p class="plain-feedback-fallback" id="plain-feedback-fallback" hidden>
+            Feedback is wired through
+            <a href="https://github.com/jiahaoh/jiahaoh.github.io/discussions">GitHub Discussions</a>.
+          </p>
+        </section>
+
+        <section
           class="plain-visit-panel"
           id="plain-visit-panel"
           aria-label="Visit map"

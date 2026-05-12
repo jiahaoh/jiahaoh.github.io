@@ -5,9 +5,11 @@
     const history = document.getElementById('plain-history');
     const dashboard = document.getElementById('plain-home-dashboard');
     const visitPanel = document.getElementById('plain-visit-panel');
+    const feedbackPanel = document.getElementById('plain-feedback-panel');
     const bio = document.getElementById('plain-home-bio');
     const bioController = initPlainBioTyper();
     const visitController = initPlainVisits();
+    const feedbackController = initPlainFeedback();
     initPlainCommandPalette();
 
     if (input && suggest && history) {
@@ -16,7 +18,7 @@
         { cmd: 'about', desc: 'Type a short introduction here.', href: null, action: 'about' },
         { cmd: 'help', desc: 'Show all available commands.', href: null },
       ];
-      const helpCommands = ['blog', 'about', 'status', 'visits'];
+      const helpCommands = ['blog', 'about', 'status', 'visits', 'feedback'];
       const aliases = { map: 'visits', traffic: 'visits', where: 'visits', writing: 'blog' };
 
       function renderPrompt() {
@@ -54,6 +56,7 @@
       function resetHome() {
         if (dashboard) dashboard.hidden = true;
         if (visitPanel) visitPanel.hidden = true;
+        if (feedbackPanel) feedbackPanel.hidden = true;
         if (bio) bio.hidden = false;
         input.value = '';
         history.hidden = true;
@@ -70,6 +73,7 @@
         if (normalized === 'status') {
           if (bio) bio.hidden = true;
           if (visitPanel) visitPanel.hidden = true;
+          if (feedbackPanel) feedbackPanel.hidden = true;
           if (dashboard) dashboard.hidden = false;
           input.value = '';
           renderPrompt();
@@ -84,6 +88,7 @@
         if (hit && hit.action === 'about') {
           if (dashboard) dashboard.hidden = true;
           if (visitPanel) visitPanel.hidden = true;
+          if (feedbackPanel) feedbackPanel.hidden = true;
           if (bio) bio.hidden = false;
           if (bioController) bioController.typeAbout();
           input.value = '';
@@ -93,6 +98,7 @@
 
         if (normalized === 'visits') {
           if (dashboard) dashboard.hidden = true;
+          if (feedbackPanel) feedbackPanel.hidden = true;
           if (bio) bio.hidden = true;
           if (visitPanel) visitPanel.hidden = false;
           if (visitController) visitController.show();
@@ -101,10 +107,21 @@
           return;
         }
 
+        if (normalized === 'feedback') {
+          if (dashboard) dashboard.hidden = true;
+          if (visitPanel) visitPanel.hidden = true;
+          if (bio) bio.hidden = true;
+          if (feedbackPanel) feedbackPanel.hidden = false;
+          if (feedbackController) feedbackController.show();
+          input.value = '';
+          renderPrompt();
+          return;
+        }
+
         if (normalized === 'help' || normalized === '?') {
           writeHistory(normalized, `available: ${helpCommands.join(' · ')}`, { key: 'help' });
         } else {
-          writeHistory(normalized, `command not found: <b>${normalized}</b> · try <span class="accent">help</span>`);
+          writeHistory(normalized, `command not found: <b>${normalized}</b> · try <span class="accent">help</span>`, { key: 'unknown-command' });
         }
 
         input.value = '';
@@ -415,6 +432,53 @@
         if (/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(value)) return value;
         return '';
       }
+    }
+
+    function initPlainFeedback() {
+      const panel = document.getElementById('plain-feedback-panel');
+      if (!panel) return null;
+
+      const thread = document.getElementById('plain-feedback-thread');
+      const fallback = document.getElementById('plain-feedback-fallback');
+      let loaded = false;
+
+      return {
+        show() {
+          if (loaded || !thread) return;
+
+          const attrs = {
+            src: 'https://giscus.app/client.js',
+            'data-repo': panel.dataset.giscusRepo,
+            'data-repo-id': panel.dataset.giscusRepoId,
+            'data-category': panel.dataset.giscusCategory,
+            'data-category-id': panel.dataset.giscusCategoryId,
+            'data-mapping': panel.dataset.giscusMapping || 'specific',
+            'data-term': panel.dataset.giscusTerm || '/feedback',
+            'data-strict': panel.dataset.giscusStrict || '1',
+            'data-reactions-enabled': panel.dataset.giscusReactionsEnabled || '1',
+            'data-emit-metadata': panel.dataset.giscusEmitMetadata || '0',
+            'data-input-position': panel.dataset.giscusInputPosition || 'bottom',
+            'data-theme': panel.dataset.giscusTheme || 'preferred_color_scheme',
+            'data-lang': panel.dataset.giscusLang || 'en',
+            crossorigin: 'anonymous',
+            async: '',
+          };
+
+          const hasRequiredConfig = attrs['data-repo'] && attrs['data-repo-id'] && attrs['data-category'] && attrs['data-category-id'];
+
+          if (!hasRequiredConfig) {
+            if (fallback) fallback.hidden = false;
+            return;
+          }
+
+          const script = document.createElement('script');
+          Object.entries(attrs).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) script.setAttribute(key, value);
+          });
+          thread.appendChild(script);
+          loaded = true;
+        },
+      };
     }
 
     function initPlainVisits() {
